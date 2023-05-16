@@ -1,17 +1,18 @@
+import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/screens/home.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:window_size/window_size.dart';
 
-void main() {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  setWindowTitle('データの箪笥【データンス】');
-  setWindowMinSize(const Size(1280, 720));
-  setWindowMaxSize(const Size(1280, 720));
+  setWindowTitle(appTitle);
+  setWindowMinSize(const Size(windowWidth, windowHeight));
+  setWindowMaxSize(const Size(windowWidth, windowHeight));
   getCurrentScreen().then((screen) {
     setWindowFrame(Rect.fromCenter(
       center: screen!.frame.center,
-      width: 1280,
-      height: 720,
+      width: windowWidth,
+      height: windowHeight,
     ));
   });
   runApp(const MyApp());
@@ -22,10 +23,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const FluentApp(
+    return FluentApp(
       debugShowCheckedModeBanner: false,
-      title: 'データの箪笥【データンス】',
-      home: HomeScreen(),
+      title: appTitle,
+      theme: themeData(),
+      home: const HomeScreen(),
     );
   }
 }

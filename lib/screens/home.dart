@@ -1,3 +1,7 @@
+import 'package:data_chest_exe/common/dialog.dart';
+import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/screens/format_add.dart';
+import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,34 +19,25 @@ class _HomeScreenState extends State<HomeScreen> {
     return NavigationView(
       appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: const Color(0xFF795548),
-        title: const Text(
-          'データの箪笥【データンス】',
-          style: TextStyle(
-            color: Color(0xFFFFFFFF),
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        backgroundColor: mainColor,
+        title: const Text(appTitle, style: kAppBarTextStyle),
         actions: Padding(
           padding: const EdgeInsets.all(8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Align(
-                alignment: Alignment.centerRight,
-                child: FilledButton(
-                  onPressed: () => showContentDialog(context),
-                  style: ButtonStyle(
-                    backgroundColor: ButtonState.all(Colors.white),
-                  ),
-                  child: const Text(
-                    '使い方',
-                    style: TextStyle(color: Colors.black),
-                  ),
+          child: Align(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomIconButton(
+                  iconData: FluentIcons.info,
+                  iconColor: blackColor,
+                  labelText: '使い方',
+                  labelColor: blackColor,
+                  backgroundColor: whiteColor,
+                  onPressed: () => showHowToDialog(context),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -55,107 +50,33 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.only(top: 8),
           child: Text(
             'フォーマット一覧',
-            style: TextStyle(
-              fontSize: 14,
-            ),
+            style: TextStyle(fontSize: 12),
           ),
         ),
         items: [
           PaneItem(
-            selectedTileColor: ButtonState.all(Colors.white),
+            selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.excel_document),
             title: const Text('見本用【CSV】'),
             body: _generateBody(),
           ),
           PaneItem(
+            selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.pdf),
             title: const Text('見本用【PDF】'),
             body: _generateBody(),
           ),
           PaneItem(
+            selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.file_image),
             title: const Text('見本用【画像】'),
             body: _generateBody(),
           ),
           PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書・請求書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
-            icon: const Icon(FluentIcons.excel_document),
-            title: const Text('納品書【CSV】'),
-            body: Container(),
-          ),
-          PaneItem(
+            selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.add),
             title: const Text('フォーマットを追加する'),
-            body: Container(),
+            body: const FormatAddScreen(),
           ),
         ],
       ),
@@ -164,97 +85,98 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 Widget _generateBody() {
-  return Padding(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              '見本用【CSV】',
-              style: TextStyle(
-                fontSize: 18,
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  backgroundColor: ButtonState.all(Colors.red),
-                ),
-                child: const Text('見本用【CSV】を削除する'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Card(
-          child: Column(
+  return SingleChildScrollView(
+    child: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Expander(
-                header: Text('検索条件'),
-                content: Center(
-                  child: Text('検索'),
-                ),
+              Text(
+                '見本用【CSV】',
+                style: TextStyle(fontSize: 18),
               ),
-              const SizedBox(height: 8),
+              CustomIconButton(
+                iconData: FluentIcons.delete,
+                iconColor: whiteColor,
+                labelText: '見本用【CSV】を削除する',
+                labelColor: whiteColor,
+                backgroundColor: redColor,
+              ),
             ],
           ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  backgroundColor: ButtonState.all(Colors.red),
+          const SizedBox(height: 16),
+          Card(
+            child: Column(
+              children: [
+                Expander(
+                  header: const Text('検索条件'),
+                  content: Column(
+                    children: [
+                      GridView.builder(
+                        shrinkWrap: true,
+                        itemCount: 10,
+                        gridDelegate: kSearchGrid,
+                        itemBuilder: (context, index) {
+                          return InfoLabel(
+                            label: '名前',
+                            child: const TextBox(expands: false),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CustomIconButton(
+                            iconData: FluentIcons.clear,
+                            iconColor: lightBlueColor,
+                            labelText: '検索クリア',
+                            labelColor: lightBlueColor,
+                            backgroundColor: whiteColor,
+                          ),
+                          SizedBox(width: 8),
+                          CustomIconButton(
+                            iconData: FluentIcons.search,
+                            iconColor: whiteColor,
+                            labelText: '検索する',
+                            labelColor: whiteColor,
+                            backgroundColor: lightBlueColor,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                child: const Text('データを削除する'),
-              ),
+                const SizedBox(height: 8),
+                //
+              ],
             ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: FilledButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  backgroundColor: ButtonState.all(Colors.blue),
-                ),
-                child: const Text('データを追加する'),
+          ),
+          const SizedBox(height: 16),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomIconButton(
+                iconData: FluentIcons.delete,
+                iconColor: redColor,
+                labelText: 'データを削除する',
+                labelColor: redColor,
+                backgroundColor: whiteColor,
               ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
-
-void showContentDialog(BuildContext context) async {
-  final result = await showDialog<String>(
-    context: context,
-    builder: (context) => ContentDialog(
-      title: const Text('Delete file permanently?'),
-      content: const Text(
-        'If you delete this file, you won\'t be able to recover it. Do you want to delete it?',
+              CustomIconButton(
+                iconData: FluentIcons.add,
+                iconColor: whiteColor,
+                labelText: 'データを追加する',
+                labelColor: whiteColor,
+                backgroundColor: blueColor,
+              ),
+            ],
+          ),
+        ],
       ),
-      actions: [
-        Button(
-          child: const Text('Delete'),
-          onPressed: () {
-            Navigator.pop(context, 'User deleted file');
-            // Delete file here
-          },
-        ),
-        FilledButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.pop(context, 'User canceled dialog'),
-        ),
-      ],
     ),
   );
 }
