@@ -1,4 +1,5 @@
 import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/db/format.dart';
 import 'package:data_chest_exe/screens/home.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:window_size/window_size.dart';
@@ -15,6 +16,7 @@ Future main() async {
       height: windowHeight,
     ));
   });
+  final database = MyDatabase();
   runApp(const MyApp());
 }
 

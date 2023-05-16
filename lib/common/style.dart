@@ -35,3 +35,27 @@ const SliverGridDelegate kSearchGrid =
   crossAxisCount: 4,
   crossAxisSpacing: 8,
 );
+
+const Map<String, String> kFormatTypeData = {
+  'csv': 'CSV形式',
+  'pdf': 'PDF形式',
+  'img': '画像形式',
+};
+
+final kFormatTypeList =
+    kFormatTypeData.entries.map((e) => TypeModel(e.key, e.value)).toList();
+
+const Map<String, String> kItemTypeData = {
+  'text': '文字列',
+  'number': '数値',
+  'datetime': '日時',
+};
+
+final kItemTypeList =
+    kItemTypeData.entries.map((e) => TypeModel(e.key, e.value)).toList();
+
+class TypeModel {
+  String key;
+  String value;
+  TypeModel(this.key, this.value);
+}
