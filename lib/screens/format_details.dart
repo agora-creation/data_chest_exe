@@ -4,6 +4,7 @@ import 'package:data_chest_exe/common/dialog.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/objectbox.g.dart';
+import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -120,6 +121,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
+                    const CustomDataTable(),
                   ],
                 ),
               ),
