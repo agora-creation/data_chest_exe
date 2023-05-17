@@ -1,7 +1,16 @@
+import 'dart:convert';
+
 import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/main.dart';
+import 'package:data_chest_exe/models/format.dart';
+import 'package:data_chest_exe/objectbox.g.dart';
+import 'package:data_chest_exe/widgets/custom_icon.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_items_combo_box.dart';
+import 'package:data_chest_exe/widgets/custom_items_table.dart';
 import 'package:data_chest_exe/widgets/custom_radio_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
+import 'package:data_chest_exe/widgets/custom_type_note.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class FormatAddScreen extends StatefulWidget {
@@ -12,9 +21,71 @@ class FormatAddScreen extends StatefulWidget {
 }
 
 class _FormatAddScreenState extends State<FormatAddScreen> {
+  Box<FormatModel> formatBox = objectBox.store.box<FormatModel>();
   TextEditingController title = TextEditingController();
   TextEditingController remarks = TextEditingController();
   String type = '';
+  List<Map<String, String>> items = [];
+  List<TableRow> itemRows = [];
+
+  void _itemAdd() {
+    items.add({
+      'name': '',
+      'type': 'text',
+    });
+    _rebuildItemRows();
+  }
+
+  void _itemMod(Map item) {
+    _rebuildItemRows();
+  }
+
+  void _itemRemove(Map item) {
+    items.remove(item);
+    _rebuildItemRows();
+  }
+
+  void _rebuildItemRows() {
+    setState(() {
+      itemRows.clear();
+      for (Map item in items) {
+        itemRows.add(TableRow(
+          children: [
+            Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(4),
+              child: CustomTextBox(
+                onChanged: (value) {
+                  item['name'] = value;
+                },
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(4),
+              child: CustomItemsComboBox(
+                value: item['type'],
+                onChanged: (value) {
+                  item['type'] = value;
+                  _itemMod(item);
+                },
+              ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(4),
+              child: CustomIcon(
+                iconData: FluentIcons.clear,
+                iconColor: whiteColor,
+                backgroundColor: redColor,
+                onPressed: () => _itemRemove(item),
+              ),
+            ),
+          ],
+        ));
+      }
+    });
+  }
 
   void _init() {
     setState(() {
@@ -46,7 +117,19 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   labelText: '下記内容で追加する',
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
-                  onPressed: () {},
+                  onPressed: () {
+                    if (title.text == '') return;
+                    if (items.isEmpty) return;
+                    String itemsJson = json.encode(items);
+                    FormatModel model = FormatModel(
+                      title: title.text,
+                      remarks: remarks.text,
+                      type: type,
+                      items: itemsJson,
+                      createdAt: DateTime.now(),
+                    );
+                    formatBox.put(model);
+                  },
                 ),
               ],
             ),
@@ -92,93 +175,9 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    type == 'csv'
-                        ? const Text(
-                            '※アップロードする予定のCSVファイルを確認し、一行目の見出し名とその値のタイプを入力・選択してください。',
-                            style: TextStyle(color: redColor),
-                          )
-                        : Container(),
-                    type == 'pdf'
-                        ? const Text(
-                            '※アップロードする予定のPDFファイルとは別に、PDFの名前や作成日などを追加するため、項目名とその値のタイプを入力・選択してください。',
-                            style: TextStyle(color: redColor),
-                          )
-                        : Container(),
-                    type == 'img'
-                        ? const Text(
-                            '※アップロードする予定の画像ファイルとは別に、画像の名前や作成日などを追加するため、項目名とその値のタイプを入力・選択してください。',
-                            style: TextStyle(color: redColor),
-                          )
-                        : Container(),
+                    CustomTypeNote(type: type),
                     const SizedBox(height: 8),
-                    Table(
-                      border: TableBorder.all(color: greyColor),
-                      columnWidths: const {
-                        0: FlexColumnWidth(5),
-                        1: FlexColumnWidth(1),
-                        2: FlexColumnWidth(0.5),
-                      },
-                      children: [
-                        TableRow(
-                          decoration: const BoxDecoration(color: grey2Color),
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.all(4),
-                              child: const Text('項目名'),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.all(4),
-                              child: const Text('項目タイプ'),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.all(4),
-                              child: const Text('削除'),
-                            ),
-                          ],
-                        ),
-                        TableRow(
-                          children: [
-                            Container(
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.all(4),
-                              child: TextBox(),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.all(4),
-                              child: ComboBox(
-                                value: '',
-                                items: kItemTypeList.map((e) {
-                                  return ComboBoxItem(
-                                    value: e.key,
-                                    child: Text(e.value),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {},
-                                isExpanded: true,
-                              ),
-                            ),
-                            Container(
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.all(4),
-                              child: IconButton(
-                                icon: const Icon(
-                                  FluentIcons.clear,
-                                  color: whiteColor,
-                                ),
-                                style: ButtonStyle(
-                                  backgroundColor: ButtonState.all(redColor),
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    CustomItemsTable(rows: itemRows),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,10 +190,11 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                           labelText: '項目を追加する',
                           labelColor: whiteColor,
                           backgroundColor: cyanColor,
-                          onPressed: () {},
+                          onPressed: () => _itemAdd(),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),

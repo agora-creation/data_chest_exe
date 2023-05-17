@@ -1,14 +1,14 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
 class CustomTextBox extends StatelessWidget {
-  final TextEditingController controller;
-  final String placeholder;
+  final TextEditingController? controller;
+  final String? placeholder;
   final int? maxLines;
   final Function(String)? onChanged;
 
   const CustomTextBox({
-    required this.controller,
-    required this.placeholder,
+    this.controller,
+    this.placeholder,
     this.maxLines,
     this.onChanged,
     Key? key,
