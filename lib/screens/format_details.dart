@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:data_chest_exe/common/dialog.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
-import 'package:data_chest_exe/objectbox.g.dart';
+import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
@@ -11,11 +11,11 @@ import 'package:fluent_ui/fluent_ui.dart';
 
 class FormatDetailsScreen extends StatefulWidget {
   final FormatModel format;
-  final Box<FormatModel> formatBox;
+  final Function() resetIndex;
 
   const FormatDetailsScreen({
     required this.format,
-    required this.formatBox,
+    required this.resetIndex,
     Key? key,
   }) : super(key: key);
 
@@ -24,6 +24,7 @@ class FormatDetailsScreen extends StatefulWidget {
 }
 
 class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
+  FormatService formatService = FormatService();
   List items = [];
 
   void _init() {
@@ -62,8 +63,9 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   backgroundColor: redColor,
                   onPressed: () => showFormatDeleteDialog(
                     context: context,
+                    formatService: formatService,
                     format: widget.format,
-                    formatBox: widget.formatBox,
+                    resetIndex: widget.resetIndex,
                   ),
                 ),
               ],
@@ -126,7 +128,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -136,7 +138,9 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   labelText: 'データを削除する',
                   labelColor: redColor,
                   backgroundColor: whiteColor,
-                  onPressed: () {},
+                  onPressed: () {
+                    showDataDeleteDialog(context: context);
+                  },
                 ),
                 CustomIconButton(
                   iconData: FluentIcons.add,
@@ -144,7 +148,9 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   labelText: 'データを追加する',
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
-                  onPressed: () {},
+                  onPressed: () {
+                    showDataAddDialog(context: context);
+                  },
                 ),
               ],
             ),

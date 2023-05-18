@@ -1,4 +1,3 @@
-import 'package:data_table_2/data_table_2.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as m;
 
@@ -7,67 +6,91 @@ class CustomDataTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: PaginatedDataTable2(
-        onSelectAll: (value) {},
-        sortColumnIndex: 1,
-        sortAscending: true,
+    return SizedBox(
+      height: 400,
+      child: m.PaginatedDataTable(
+        rowsPerPage: 4,
         columns: [
-          m.DataColumn(label: const Text('id')),
-          m.DataColumn(label: const Text('name')),
-          m.DataColumn(label: const Text('gender')),
-          m.DataColumn(label: const Text('作成日')),
+          m.DataColumn(label: Text('Header A')),
+          m.DataColumn(label: Text('Header B')),
+          m.DataColumn(label: Text('Header C')),
+          m.DataColumn(label: Text('Header D')),
         ],
-        source: SampleDataSource(),
+        source: _DataSource(context),
       ),
     );
   }
 }
 
-class SampleDataSource extends m.DataTableSource {
+class _Row {
+  _Row(
+    this.valueA,
+    this.valueB,
+    this.valueC,
+    this.valueD,
+  );
+
+  final String valueA;
+  final String valueB;
+  final String valueC;
+  final int valueD;
+
+  bool selected = false;
+}
+
+class _DataSource extends m.DataTableSource {
+  _DataSource(this.context) {
+    _rows = <_Row>[
+      _Row('Cell A1', 'CellB1', 'CellC1', 1),
+      _Row('Cell A2', 'CellB2', 'CellC2', 2),
+      _Row('Cell A3', 'CellB3', 'CellC3', 3),
+      _Row('Cell A4', 'CellB4', 'CellC4', 4),
+      _Row('Cell A4', 'CellB4', 'CellC4', 5),
+      _Row('Cell A4', 'CellB4', 'CellC4', 5),
+      _Row('Cell A4', 'CellB4', 'CellC4', 5),
+      _Row('Cell A4', 'CellB4', 'CellC4', 5),
+      _Row('Cell A4', 'CellB4', 'CellC4', 5),
+      _Row('Cell A4', 'CellB4', 'CellC4', 5),
+    ];
+  }
+
+  final BuildContext context;
+  List<_Row>? _rows;
+
+  int _selectedCount = 0;
+
   @override
-  m.DataRow getRow(int index) {
-    /// 1行文のデータ
-    return m.DataRow(
-      cells: <m.DataCell>[
-        m.DataCell(
-          Text('articleList[index].id'),
-        ),
-        m.DataCell(
-          Text('articleList[index].title'),
-        ),
-        m.DataCell(
-          Text(
-            'DateFormat.yMMMMd().add_jms().format(articleList[index].createdAt)',
-          ),
-        ),
-        m.DataCell(
-          Text(
-            'DateFormat.yMMMMd().add_jms().format(articleList[index].updatedAt)',
-          ),
-        ),
-      ],
-      // メモ「value」がbool値なのが、人によっては扱いづらいかも。
-      // chekboxの活性非活性でのみ利用すべきなのかも。
+  m.DataRow? getRow(int index) {
+    assert(index >= 0);
+    if (index >= _rows!.length) return null;
+    final row = _rows![index];
+    return m.DataRow.byIndex(
+      index: index,
+      selected: row.selected,
       onSelectChanged: (value) {
-        // context使えなかった。
-        // showDialog<void>(
-        //   context: context,
-        //   builder: (context) {
-        //     return AlertDialog(
-        //       title: const Text('選択した行のデータ'),
-        //       content: Text(articleList[index].toString()),
-        //     );
-        //   },
-        // );
+        if (row.selected != value) {
+          bool v = value ?? false;
+          _selectedCount += v ? 1 : -1;
+          assert(_selectedCount >= 0);
+          row.selected = v;
+          notifyListeners();
+        }
       },
+      cells: [
+        m.DataCell(Text(row.valueA)),
+        m.DataCell(Text(row.valueB)),
+        m.DataCell(Text(row.valueC)),
+        m.DataCell(Text(row.valueD.toString())),
+      ],
     );
   }
 
   @override
-  int get rowCount => 10; // 全行数
+  int get rowCount => _rows!.length;
+
   @override
-  bool get isRowCountApproximate => false; // 行数は常に正確な値かどうか(不明な場合はfalseにしておく)
+  bool get isRowCountApproximate => false;
+
   @override
-  int get selectedRowCount => 0; // 選択された行数(選択を使用しない場合は0で問題ない)
+  int get selectedRowCount => _selectedCount;
 }

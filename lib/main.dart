@@ -1,10 +1,7 @@
-import 'package:data_chest_exe/common/objectbox_interface.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/screens/home.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:window_size/window_size.dart';
-
-late ObjectBox objectBox;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +15,6 @@ Future main() async {
       height: windowHeight,
     ));
   });
-  objectBox = await ObjectBox.create();
   runApp(const MyApp());
 }
 

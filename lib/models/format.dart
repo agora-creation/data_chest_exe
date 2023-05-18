@@ -1,23 +1,49 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:objectbox/objectbox.dart';
 
-@Entity()
 class FormatModel {
-  @Id()
-  int id = 0;
-  String? title;
-  String? remarks;
-  String? type;
-  String? items;
+  int? id;
+  String title;
+  String remarks;
+  String type;
+  String items;
   DateTime? createdAt;
 
   FormatModel({
-    this.title,
-    this.remarks,
-    this.type,
-    this.items,
+    this.id,
+    required this.title,
+    required this.remarks,
+    required this.type,
+    required this.items,
     this.createdAt,
   });
+
+  factory FormatModel.fromSQLite(Map map) {
+    return FormatModel(
+      id: map['id'],
+      title: map['title'],
+      remarks: map['remarks'],
+      type: map['type'],
+      items: map['items'],
+      createdAt: DateTime.tryParse(map['createdAt']),
+    );
+  }
+
+  static List<FormatModel> fromSQLiteList(List<Map> listMap) {
+    List<FormatModel> ret = [];
+    for (Map map in listMap) {
+      ret.add(FormatModel.fromSQLite(map));
+    }
+    return ret;
+  }
+
+  factory FormatModel.empty() {
+    return FormatModel(
+      title: '',
+      remarks: '',
+      type: '',
+      items: '',
+    );
+  }
 
   IconData paneIcon() {
     IconData ret = FluentIcons.file_code;
@@ -36,7 +62,7 @@ class FormatModel {
   }
 
   String paneTitle() {
-    String ret = title ?? '';
+    String ret = title;
     switch (type) {
       case 'csv':
         ret += '【CSV形式】';

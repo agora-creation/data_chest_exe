@@ -1,9 +1,9 @@
 import 'dart:convert';
 
+import 'package:data_chest_exe/common/info_bar.dart';
 import 'package:data_chest_exe/common/style.dart';
-import 'package:data_chest_exe/main.dart';
 import 'package:data_chest_exe/models/format.dart';
-import 'package:data_chest_exe/objectbox.g.dart';
+import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_icon.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:data_chest_exe/widgets/custom_items_combo_box.dart';
@@ -14,49 +14,80 @@ import 'package:data_chest_exe/widgets/custom_type_note.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class FormatAddScreen extends StatefulWidget {
-  const FormatAddScreen({Key? key}) : super(key: key);
+  final Function() resetIndex;
+
+  const FormatAddScreen({
+    required this.resetIndex,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<FormatAddScreen> createState() => _FormatAddScreenState();
 }
 
 class _FormatAddScreenState extends State<FormatAddScreen> {
-  Box<FormatModel> formatBox = objectBox.store.box<FormatModel>();
+  FormatService formatService = FormatService();
   TextEditingController title = TextEditingController();
   TextEditingController remarks = TextEditingController();
-  String type = '';
+  String type = kFormatTypeList.first.key;
   List<Map<String, String>> items = [];
   List<TableRow> itemRows = [];
 
   void _itemAdd() {
-    items.add({
-      'name': '',
-      'type': 'text',
-    });
+    items.add({'name': '', 'type': 'text'});
     _rebuildItemRows();
   }
 
-  void _itemMod(Map item) {
+  void _itemOnChange(Map map, String key, String? value) {
+    map[key] = value;
     _rebuildItemRows();
   }
 
-  void _itemRemove(Map item) {
-    items.remove(item);
+  void _itemRemove(Map map) {
+    items.remove(map);
+    _rebuildItemRows();
+  }
+
+  void _rebuildItems() {
+    items.clear();
+    switch (type) {
+      case 'csv':
+        items.add({'name': '会員番号', 'type': 'text'});
+        items.add({'name': '姓', 'type': 'text'});
+        items.add({'name': '名', 'type': 'text'});
+        items.add({'name': '郵便番号', 'type': 'text'});
+        items.add({'name': '住所', 'type': 'text'});
+        items.add({'name': '電話番号', 'type': 'text'});
+        break;
+      case 'pdf':
+        items.add({'name': '発行日', 'type': 'datetime'});
+        items.add({'name': '番号', 'type': 'text'});
+        items.add({'name': '送り先', 'type': 'text'});
+        items.add({'name': '金額', 'type': 'text'});
+        break;
+      case 'img':
+        items.add({'name': '発行日', 'type': 'datetime'});
+        items.add({'name': '番号', 'type': 'text'});
+        items.add({'name': '送り先', 'type': 'text'});
+        items.add({'name': '金額', 'type': 'text'});
+        break;
+    }
     _rebuildItemRows();
   }
 
   void _rebuildItemRows() {
     setState(() {
       itemRows.clear();
-      for (Map item in items) {
+      for (Map map in items) {
         itemRows.add(TableRow(
           children: [
             Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.all(4),
               child: CustomTextBox(
+                controller: TextEditingController(text: map['name']),
                 onChanged: (value) {
-                  item['name'] = value;
+                  _itemOnChange(map, 'name', value);
                 },
               ),
             ),
@@ -64,10 +95,9 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
               alignment: Alignment.center,
               margin: const EdgeInsets.all(4),
               child: CustomItemsComboBox(
-                value: item['type'],
+                value: map['type'],
                 onChanged: (value) {
-                  item['type'] = value;
-                  _itemMod(item);
+                  _itemOnChange(map, 'type', value);
                 },
               ),
             ),
@@ -78,7 +108,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                 iconData: FluentIcons.clear,
                 iconColor: whiteColor,
                 backgroundColor: redColor,
-                onPressed: () => _itemRemove(item),
+                onPressed: () => _itemRemove(map),
               ),
             ),
           ],
@@ -87,16 +117,10 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
     });
   }
 
-  void _init() {
-    setState(() {
-      type = kFormatTypeList.first.key;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    _init();
+    _rebuildItems();
   }
 
   @override
@@ -117,18 +141,18 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   labelText: '下記内容で追加する',
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
-                  onPressed: () {
+                  onPressed: () async {
                     if (title.text == '') return;
                     if (items.isEmpty) return;
                     String itemsJson = json.encode(items);
-                    FormatModel model = FormatModel(
+                    formatService.insert(FormatModel(
                       title: title.text,
                       remarks: remarks.text,
                       type: type,
                       items: itemsJson,
-                      createdAt: DateTime.now(),
-                    );
-                    formatBox.put(model);
+                    ));
+                    widget.resetIndex();
+                    showSuccessBar(context, 'フォーマットを追加しました');
                   },
                 ),
               ],
@@ -166,9 +190,8 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                             checked: type == e.key,
                             labelText: e.value,
                             onChanged: (value) {
-                              setState(() {
-                                type = e.key;
-                              });
+                              type = e.key;
+                              _rebuildItems();
                             },
                           );
                         }).toList(),

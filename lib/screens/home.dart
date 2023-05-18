@@ -1,10 +1,9 @@
 import 'package:data_chest_exe/common/dialog.dart';
 import 'package:data_chest_exe/common/style.dart';
-import 'package:data_chest_exe/main.dart';
 import 'package:data_chest_exe/models/format.dart';
-import 'package:data_chest_exe/objectbox.g.dart';
 import 'package:data_chest_exe/screens/format_add.dart';
 import 'package:data_chest_exe/screens/format_details.dart';
+import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
@@ -16,53 +15,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Box<FormatModel>? formatBox;
-  Stream<List<FormatModel>>? fetchAllFormat;
+  FormatService formatService = FormatService();
   int selectedIndex = 0;
 
-  void _init() {
+  void resetIndex() {
     setState(() {
-      formatBox = objectBox.store.box<FormatModel>();
-      fetchAllFormat = formatBox!
-          .query()
-          .watch(triggerImmediately: true)
-          .map((event) => event.find());
+      selectedIndex = 0;
     });
   }
 
   @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
-  @override
-  void dispose() {
-    objectBox.store.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<FormatModel>>(
-        stream: fetchAllFormat,
+    return FutureBuilder<List<FormatModel>>(
+        future: formatService.select(),
         builder: (context, snapshot) {
           List<NavigationPaneItem> items = [];
           items.add(PaneItem(
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.add),
             title: const Text('フォーマットを追加する'),
-            body: const FormatAddScreen(),
+            body: FormatAddScreen(resetIndex: resetIndex),
           ));
           if (snapshot.hasData) {
-            snapshot.data?.forEach((e) {
+            snapshot.data?.forEach((format) {
               items.add(PaneItem(
                 selectedTileColor: ButtonState.all(whiteColor),
-                icon: Icon(e.paneIcon()),
-                title: Text(e.paneTitle()),
+                icon: Icon(format.paneIcon()),
+                title: Text(format.paneTitle()),
                 body: FormatDetailsScreen(
-                  format: e,
-                  formatBox: formatBox!,
+                  format: format,
+                  resetIndex: resetIndex,
                 ),
               ));
             });
