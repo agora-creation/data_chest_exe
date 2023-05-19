@@ -1,15 +1,18 @@
+import 'dart:convert';
+
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/connection_sqlite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FormatService {
-  ConnectionSQLiteService _connection = ConnectionSQLiteService.instance;
+  ConnectionSQLiteService connection = ConnectionSQLiteService.instance;
 
   Future<Database> _getDatabase() async {
-    return await _connection.db;
+    return await connection.db;
   }
 
   Future<FormatModel> insert(FormatModel formatModel) async {
+    String itemsJson = json.encode(formatModel.items);
     try {
       Database db = await _getDatabase();
       int id = await db.rawInsert('''
@@ -22,7 +25,7 @@ class FormatService {
           '${formatModel.title}',
           '${formatModel.remarks}',
           '${formatModel.type}',
-          '${formatModel.items}'
+          '$itemsJson'
         );
       ''');
       formatModel.id = id;

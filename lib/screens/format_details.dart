@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:data_chest_exe/common/dialog.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
@@ -25,19 +23,6 @@ class FormatDetailsScreen extends StatefulWidget {
 
 class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
   FormatService formatService = FormatService();
-  List items = [];
-
-  void _init() {
-    setState(() {
-      items = json.decode(widget.format.items!);
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,12 +55,12 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
-              widget.format.remarks ?? '',
+              widget.format.remarks,
               style: const TextStyle(color: greyColor),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(8),
@@ -87,11 +72,11 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
-                            itemCount: items.length,
+                            itemCount: widget.format.items.length,
                             gridDelegate: kSearchGrid,
                             itemBuilder: (context, index) {
                               return InfoLabel(
-                                label: items[index]['name'],
+                                label: '${widget.format.items[index]['name']}',
                                 child: const CustomTextBox(),
                               );
                             },
@@ -123,7 +108,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const CustomDataTable(),
+                    CustomDataTable(items: widget.format.items),
                   ],
                 ),
               ),

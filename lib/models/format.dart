@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fluent_ui/fluent_ui.dart';
 
 class FormatModel {
@@ -5,7 +7,7 @@ class FormatModel {
   String title;
   String remarks;
   String type;
-  String items;
+  List<Map<String, String>> items;
   DateTime? createdAt;
 
   FormatModel({
@@ -23,7 +25,7 @@ class FormatModel {
       title: map['title'],
       remarks: map['remarks'],
       type: map['type'],
-      items: map['items'],
+      items: _decodeItems(map['items']),
       createdAt: DateTime.tryParse(map['createdAt']),
     );
   }
@@ -41,8 +43,20 @@ class FormatModel {
       title: '',
       remarks: '',
       type: '',
-      items: '',
+      items: [],
     );
+  }
+
+  static List<Map<String, String>> _decodeItems(String items) {
+    List<Map<String, String>> ret = [];
+    List list = json.decode(items);
+    for (var e in list) {
+      ret.add({
+        'name': e['name'],
+        'type': e['type'],
+      });
+    }
+    return ret;
   }
 
   IconData paneIcon() {

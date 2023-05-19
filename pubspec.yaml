@@ -21,7 +21,8 @@ dependencies:
   sqflite: ^2.2.8+4
   sqflite_common_ffi: ^2.2.5
   path: ^1.8.3
-  scrollable_table_view: ^1.0.1
+  syncfusion_flutter_datagrid_export: ^21.1.35-beta
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:

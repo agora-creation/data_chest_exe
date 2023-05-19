@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:data_chest_exe/common/info_bar.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
@@ -144,12 +142,11 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   onPressed: () async {
                     if (title.text == '') return;
                     if (items.isEmpty) return;
-                    String itemsJson = json.encode(items);
                     formatService.insert(FormatModel(
                       title: title.text,
                       remarks: remarks.text,
                       type: type,
-                      items: itemsJson,
+                      items: items,
                     ));
                     widget.resetIndex();
                     showSuccessBar(context, 'フォーマットを追加しました');

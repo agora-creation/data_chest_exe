@@ -1,96 +1,107 @@
+import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/widgets/custom_data_source.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' as m;
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
-class CustomDataTable extends StatelessWidget {
-  const CustomDataTable({Key? key}) : super(key: key);
+class CustomDataTable extends StatefulWidget {
+  final List<Map<String, String>> items;
+
+  const CustomDataTable({
+    required this.items,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<CustomDataTable> createState() => _CustomDataTableState();
+}
+
+class _CustomDataTableState extends State<CustomDataTable> {
+  List<GridColumn> columns = [];
+  final List<int> rowsList = [10, 20, 30, 40, 50];
+  int _rowsPerPage = 10;
+  late CustomDataSource customDataSource;
+  List<Map<String, dynamic>> dataList = [];
+
+  void _init() {
+    columns.add(GridColumn(
+      columnName: 'id',
+      label: const Padding(
+        padding: EdgeInsets.all(4),
+        child: Text(
+          'ID',
+          softWrap: false,
+        ),
+      ),
+    ));
+    int columnKey = 1;
+    for (Map<String, String> map in widget.items) {
+      columns.add(
+        GridColumn(
+          columnName: 'column$columnKey',
+          label: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Text(
+              '${map['name']}',
+              softWrap: false,
+            ),
+          ),
+        ),
+      );
+      columnKey++;
+    }
+    for (int i = 0; i < 100; i++) {
+      Map<String, dynamic> addMap = {'id': '0000'};
+      int columnKey = 1;
+      for (Map<String, String> map in widget.items) {
+        addMap['column$columnKey'] = '11111111111';
+      }
+      dataList.add(addMap);
+    }
+    customDataSource = CustomDataSource(dataList: dataList, dataCount: 300);
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 400,
-      child: m.PaginatedDataTable(
-        rowsPerPage: 4,
-        columns: [
-          m.DataColumn(label: Text('Header A')),
-          m.DataColumn(label: Text('Header B')),
-          m.DataColumn(label: Text('Header C')),
-          m.DataColumn(label: Text('Header D')),
-        ],
-        source: _DataSource(context),
-      ),
-    );
-  }
-}
-
-class _Row {
-  _Row(
-    this.valueA,
-    this.valueB,
-    this.valueC,
-    this.valueD,
-  );
-
-  final String valueA;
-  final String valueB;
-  final String valueC;
-  final int valueD;
-
-  bool selected = false;
-}
-
-class _DataSource extends m.DataTableSource {
-  _DataSource(this.context) {
-    _rows = <_Row>[
-      _Row('Cell A1', 'CellB1', 'CellC1', 1),
-      _Row('Cell A2', 'CellB2', 'CellC2', 2),
-      _Row('Cell A3', 'CellB3', 'CellC3', 3),
-      _Row('Cell A4', 'CellB4', 'CellC4', 4),
-      _Row('Cell A4', 'CellB4', 'CellC4', 5),
-      _Row('Cell A4', 'CellB4', 'CellC4', 5),
-      _Row('Cell A4', 'CellB4', 'CellC4', 5),
-      _Row('Cell A4', 'CellB4', 'CellC4', 5),
-      _Row('Cell A4', 'CellB4', 'CellC4', 5),
-      _Row('Cell A4', 'CellB4', 'CellC4', 5),
-    ];
-  }
-
-  final BuildContext context;
-  List<_Row>? _rows;
-
-  int _selectedCount = 0;
-
-  @override
-  m.DataRow? getRow(int index) {
-    assert(index >= 0);
-    if (index >= _rows!.length) return null;
-    final row = _rows![index];
-    return m.DataRow.byIndex(
-      index: index,
-      selected: row.selected,
-      onSelectChanged: (value) {
-        if (row.selected != value) {
-          bool v = value ?? false;
-          _selectedCount += v ? 1 : -1;
-          assert(_selectedCount >= 0);
-          row.selected = v;
-          notifyListeners();
-        }
-      },
-      cells: [
-        m.DataCell(Text(row.valueA)),
-        m.DataCell(Text(row.valueB)),
-        m.DataCell(Text(row.valueC)),
-        m.DataCell(Text(row.valueD.toString())),
+    return Column(
+      children: [
+        SizedBox(
+          height: 350,
+          child: SfDataGrid(
+            source: customDataSource,
+            rowsPerPage: _rowsPerPage,
+            allowSorting: true,
+            columnWidthMode: ColumnWidthMode.none,
+            columns: columns,
+          ),
+        ),
+        SizedBox(
+          height: 60,
+          child: SfDataPagerTheme(
+            data: SfDataPagerThemeData(
+              brightness: Brightness.light,
+              selectedItemColor: blueColor,
+            ),
+            child: SfDataPager(
+              delegate: customDataSource,
+              availableRowsPerPage: rowsList,
+              pageCount: customDataSource.dataList.length / _rowsPerPage,
+              onRowsPerPageChanged: (int? rowsPerPage) {
+                setState(() {
+                  _rowsPerPage = rowsPerPage!;
+                });
+              },
+            ),
+          ),
+        ),
       ],
     );
   }
-
-  @override
-  int get rowCount => _rows!.length;
-
-  @override
-  bool get isRowCountApproximate => false;
-
-  @override
-  int get selectedRowCount => _selectedCount;
 }
