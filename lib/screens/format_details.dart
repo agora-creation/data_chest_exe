@@ -108,7 +108,9 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    CustomDataTable(items: widget.format.items),
+                    CustomDataTable(
+                      items: widget.format.items,
+                    ),
                   ],
                 ),
               ),

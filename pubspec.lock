@@ -341,6 +341,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "21.2.5"
+  syncfusion_localizations:
+    dependency: "direct main"
+    description:
+      name: syncfusion_localizations
+      sha256: "651d3cf80ed722cdb569d6be951b0925c28fdffdb8745e68df0497df5d422401"
+      url: "https://pub.dev"
+    source: hosted
+    version: "21.2.5"
   syncfusion_officecore:
     dependency: transitive
     description:

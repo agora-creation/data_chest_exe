@@ -36,11 +36,6 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
     _rebuildItemRows();
   }
 
-  void _itemOnChange(Map map, String key, String? value) {
-    map[key] = value;
-    _rebuildItemRows();
-  }
-
   void _itemRemove(Map map) {
     items.remove(map);
     _rebuildItemRows();
@@ -85,7 +80,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
               child: CustomTextBox(
                 controller: TextEditingController(text: map['name']),
                 onChanged: (value) {
-                  _itemOnChange(map, 'name', value);
+                  map['name'] = value;
                 },
               ),
             ),
@@ -95,7 +90,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
               child: CustomItemsComboBox(
                 value: map['type'],
                 onChanged: (value) {
-                  _itemOnChange(map, 'type', value);
+                  map['type'] = value;
                 },
               ),
             ),

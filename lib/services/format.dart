@@ -55,16 +55,6 @@ class FormatService {
     }
   }
 
-  Future<List<FormatModel>> select() async {
-    try {
-      Database db = await _getDatabase();
-      List<Map> listMap = await db.rawQuery('select * from format');
-      return FormatModel.fromSQLiteList(listMap);
-    } catch (e) {
-      throw Exception();
-    }
-  }
-
   Future<bool> delete(FormatModel formatModel) async {
     try {
       Database db = await _getDatabase();
@@ -75,6 +65,16 @@ class FormatService {
         return true;
       }
       return false;
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  Future<List<FormatModel>> select() async {
+    try {
+      Database db = await _getDatabase();
+      List<Map> listMap = await db.rawQuery('select * from format');
+      return FormatModel.fromSQLiteList(listMap);
     } catch (e) {
       throw Exception();
     }

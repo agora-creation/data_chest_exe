@@ -4,23 +4,26 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class CustomDataSource extends DataGridSource {
+  List<Map<String, String>> items;
+  List<Map<String, dynamic>> backups = [];
+  int? backupsCount;
+
   CustomDataSource({
     required this.items,
-    required this.dataList,
-    required this.dataCount,
+    required this.backups,
+    required this.backupsCount,
   }) {
-    dataList = getDataList(dataList, dataCount ?? 100);
+    backups = getDataList(backups, backupsCount ?? 100);
     buildDataGridRows();
   }
 
-  List<Map<String, String>> items;
-
-  int? dataCount;
-  List<Map<String, dynamic>> dataList = [];
   List<DataGridRow> dataGridRows = [];
 
+  @override
+  List<DataGridRow> get rows => dataGridRows;
+
   void buildDataGridRows() {
-    dataGridRows = dataList.map<DataGridRow>((e) {
+    dataGridRows = backups.map<DataGridRow>((e) {
       List<DataGridCell<dynamic>> cells = [];
       cells.add(DataGridCell(columnName: 'id', value: e['id']));
       int itemKey = 1;
@@ -37,9 +40,6 @@ class CustomDataSource extends DataGridSource {
   }
 
   @override
-  List<DataGridRow> get rows => dataGridRows;
-
-  @override
   DataGridRowAdapter buildRow(DataGridRow row) {
     final int rowIndex = dataGridRows.indexOf(row);
     Color backgroundColor = Colors.transparent;
@@ -53,16 +53,13 @@ class CustomDataSource extends DataGridSource {
       cells.add(CustomCell(row.getCells()[itemKey].value.toString()));
       itemKey++;
     }
-    return DataGridRowAdapter(
-      color: backgroundColor,
-      cells: cells,
-    );
+    return DataGridRowAdapter(color: backgroundColor, cells: cells);
   }
 
   @override
   Future<void> handleLoadMoreRows() async {
     await Future<void>.delayed(const Duration(seconds: 5));
-    dataList = getDataList(dataList, 15);
+    backups = getDataList(backups, 15);
     buildDataGridRows();
     notifyListeners();
   }
@@ -70,7 +67,7 @@ class CustomDataSource extends DataGridSource {
   @override
   Future<void> handleRefresh() async {
     await Future<void>.delayed(const Duration(seconds: 5));
-    dataList = getDataList(dataList, 15);
+    backups = getDataList(backups, 15);
     buildDataGridRows();
     notifyListeners();
   }
@@ -91,10 +88,7 @@ class CustomDataSource extends DataGridSource {
       return Container(
         padding: padding,
         alignment: alignment,
-        child: Text(
-          value,
-          softWrap: false,
-        ),
+        child: Text(value, softWrap: false),
       );
     }
 
@@ -111,10 +105,10 @@ class CustomDataSource extends DataGridSource {
   }
 
   List<Map<String, dynamic>> getDataList(
-    List<Map<String, dynamic>> dataList,
+    List<Map<String, dynamic>> backups,
     int count,
   ) {
-    final int startIndex = dataList.isNotEmpty ? dataList.length : 0;
+    final int startIndex = backups.isNotEmpty ? backups.length : 0;
     final int endIndex = startIndex + count;
     for (int i = startIndex; i < endIndex; i++) {
       Map<String, dynamic> addMap = {'id': '0000'};
@@ -124,8 +118,8 @@ class CustomDataSource extends DataGridSource {
         addMap[columnName] = '1111111111$i';
         itemKey++;
       }
-      dataList.add(addMap);
+      backups.add(addMap);
     }
-    return dataList;
+    return backups;
   }
 }

@@ -21,7 +21,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
   List<GridColumn> columns = [];
   int _rowsPerPage = kRowsPerPages.first;
   late CustomDataSource customDataSource;
-  List<Map<String, dynamic>> dataList = [];
+  List<Map<String, dynamic>> backups = [];
 
   void _init() {
     columns.add(GridColumn(
@@ -47,12 +47,12 @@ class _CustomDataTableState extends State<CustomDataTable> {
         addMap[columnName] = '11111111111';
         itemKey++;
       }
-      dataList.add(addMap);
+      backups.add(addMap);
     }
     customDataSource = CustomDataSource(
       items: widget.items,
-      dataList: dataList,
-      dataCount: 300,
+      backups: backups,
+      backupsCount: 300,
     );
     setState(() {});
   }
@@ -87,7 +87,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
             child: SfDataPager(
               delegate: customDataSource,
               availableRowsPerPage: kRowsPerPages,
-              pageCount: customDataSource.dataList.length / _rowsPerPage,
+              pageCount: customDataSource.backups.length / _rowsPerPage,
               onRowsPerPageChanged: (int? rowsPerPage) {
                 setState(() {
                   _rowsPerPage = rowsPerPage!;

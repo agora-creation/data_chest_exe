@@ -24,6 +24,7 @@ dependencies:
   sqflite_common_ffi: ^2.2.5
   path: ^1.8.3
   syncfusion_flutter_datagrid_export: ^21.1.35-beta
+  syncfusion_localizations: ^21.2.5
   intl: ^0.18.0
 
 dev_dependencies:
