@@ -55,10 +55,15 @@ class _CustomDataTableState extends State<CustomDataTable> {
       int columnKey = 1;
       for (Map<String, String> map in widget.items) {
         addMap['column$columnKey'] = '11111111111';
+        columnKey++;
       }
       dataList.add(addMap);
     }
-    customDataSource = CustomDataSource(dataList: dataList, dataCount: 300);
+    customDataSource = CustomDataSource(
+      items: widget.items,
+      dataList: dataList,
+      dataCount: 300,
+    );
     setState(() {});
   }
 

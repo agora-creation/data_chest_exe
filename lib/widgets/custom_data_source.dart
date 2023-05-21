@@ -4,6 +4,7 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class CustomDataSource extends DataGridSource {
   CustomDataSource({
+    required this.items,
     required this.dataList,
     required this.dataCount,
   }) {
@@ -11,18 +12,25 @@ class CustomDataSource extends DataGridSource {
     buildDataGridRows();
   }
 
+  List<Map<String, String>> items;
+
   int? dataCount;
   List<Map<String, dynamic>> dataList = [];
   List<DataGridRow> dataGridRows = [];
 
   void buildDataGridRows() {
     dataGridRows = dataList.map<DataGridRow>((e) {
-      return DataGridRow(
-        cells: [
-          DataGridCell(columnName: 'id', value: e['id']),
-          DataGridCell(columnName: 'column1', value: e['column1']),
-        ],
-      );
+      List<DataGridCell<dynamic>> cells = [];
+      cells.add(DataGridCell(columnName: 'id', value: e['id']));
+      int columnKey = 1;
+      for (Map<String, String> map in items) {
+        cells.add(DataGridCell(
+          columnName: 'column$columnKey',
+          value: e['column$columnKey'],
+        ));
+        columnKey++;
+      }
+      return DataGridRow(cells: cells);
     }).toList();
   }
 
@@ -36,24 +44,28 @@ class CustomDataSource extends DataGridSource {
     if ((rowIndex % 2) == 0) {
       backgroundColor = whiteColor;
     }
+    List<Widget> cells = [];
+    cells.add(Padding(
+      padding: const EdgeInsets.all(4),
+      child: Text(
+        row.getCells()[0].value.toString(),
+        softWrap: false,
+      ),
+    ));
+    int columnKey = 1;
+    for (Map<String, String> map in items) {
+      cells.add(Padding(
+        padding: const EdgeInsets.all(4),
+        child: Text(
+          row.getCells()[columnKey].value.toString(),
+          softWrap: false,
+        ),
+      ));
+      columnKey++;
+    }
     return DataGridRowAdapter(
       color: backgroundColor,
-      cells: [
-        Padding(
-          padding: const EdgeInsets.all(4),
-          child: Text(
-            row.getCells()[0].value.toString(),
-            softWrap: false,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(4),
-          child: Text(
-            row.getCells()[1].value.toString(),
-            softWrap: false,
-          ),
-        ),
-      ],
+      cells: cells,
     );
   }
 
@@ -115,10 +127,13 @@ class CustomDataSource extends DataGridSource {
     final int startIndex = dataList.isNotEmpty ? dataList.length : 0;
     final int endIndex = startIndex + count;
     for (int i = startIndex; i < endIndex; i++) {
-      dataList.add({
-        'id': '0000',
-        'column1': '1111111',
-      });
+      Map<String, dynamic> addMap = {'id': '0000'};
+      int columnKey = 1;
+      for (Map<String, String> map in items) {
+        addMap['column$columnKey'] = '11111111111';
+        columnKey++;
+      }
+      dataList.add(addMap);
     }
     return dataList;
   }

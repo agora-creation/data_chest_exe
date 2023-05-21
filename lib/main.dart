@@ -1,6 +1,7 @@
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/screens/home.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:window_size/window_size.dart';
 
 Future main() async {
@@ -25,6 +26,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return FluentApp(
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('ja')],
+      locale: const Locale('ja'),
       title: appTitle,
       theme: themeData(),
       home: const HomeScreen(),
