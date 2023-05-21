@@ -1,4 +1,5 @@
 import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/widgets/custom_column_label.dart';
 import 'package:data_chest_exe/widgets/custom_data_source.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
@@ -18,44 +19,33 @@ class CustomDataTable extends StatefulWidget {
 
 class _CustomDataTableState extends State<CustomDataTable> {
   List<GridColumn> columns = [];
-  final List<int> rowsList = [10, 20, 30, 40, 50];
-  int _rowsPerPage = 10;
+  int _rowsPerPage = kRowsPerPages.first;
   late CustomDataSource customDataSource;
   List<Map<String, dynamic>> dataList = [];
 
   void _init() {
     columns.add(GridColumn(
       columnName: 'id',
-      label: const Padding(
-        padding: EdgeInsets.all(4),
-        child: Text(
-          'ID',
-          softWrap: false,
-        ),
-      ),
+      label: const CustomColumnLabel('ID'),
     ));
-    int columnKey = 1;
+    int itemKey = 1;
     for (Map<String, String> map in widget.items) {
+      String columnName = 'column$itemKey';
       columns.add(
         GridColumn(
-          columnName: 'column$columnKey',
-          label: Padding(
-            padding: const EdgeInsets.all(4),
-            child: Text(
-              '${map['name']}',
-              softWrap: false,
-            ),
-          ),
+          columnName: columnName,
+          label: CustomColumnLabel('${map['name']}'),
         ),
       );
-      columnKey++;
+      itemKey++;
     }
     for (int i = 0; i < 100; i++) {
       Map<String, dynamic> addMap = {'id': '0000'};
-      int columnKey = 1;
+      int itemKey = 1;
       for (Map<String, String> map in widget.items) {
-        addMap['column$columnKey'] = '11111111111';
-        columnKey++;
+        String columnName = 'column$itemKey';
+        addMap[columnName] = '11111111111';
+        itemKey++;
       }
       dataList.add(addMap);
     }
@@ -96,7 +86,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
             ),
             child: SfDataPager(
               delegate: customDataSource,
-              availableRowsPerPage: rowsList,
+              availableRowsPerPage: kRowsPerPages,
               pageCount: customDataSource.dataList.length / _rowsPerPage,
               onRowsPerPageChanged: (int? rowsPerPage) {
                 setState(() {

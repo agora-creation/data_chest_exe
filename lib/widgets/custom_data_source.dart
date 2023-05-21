@@ -1,4 +1,5 @@
 import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/widgets/custom_cell.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -22,13 +23,14 @@ class CustomDataSource extends DataGridSource {
     dataGridRows = dataList.map<DataGridRow>((e) {
       List<DataGridCell<dynamic>> cells = [];
       cells.add(DataGridCell(columnName: 'id', value: e['id']));
-      int columnKey = 1;
+      int itemKey = 1;
       for (Map<String, String> map in items) {
+        String columnName = 'column$itemKey';
         cells.add(DataGridCell(
-          columnName: 'column$columnKey',
-          value: e['column$columnKey'],
+          columnName: columnName,
+          value: e[columnName],
         ));
-        columnKey++;
+        itemKey++;
       }
       return DataGridRow(cells: cells);
     }).toList();
@@ -45,23 +47,11 @@ class CustomDataSource extends DataGridSource {
       backgroundColor = whiteColor;
     }
     List<Widget> cells = [];
-    cells.add(Padding(
-      padding: const EdgeInsets.all(4),
-      child: Text(
-        row.getCells()[0].value.toString(),
-        softWrap: false,
-      ),
-    ));
-    int columnKey = 1;
+    cells.add(CustomCell(row.getCells()[0].value.toString()));
+    int itemKey = 1;
     for (Map<String, String> map in items) {
-      cells.add(Padding(
-        padding: const EdgeInsets.all(4),
-        child: Text(
-          row.getCells()[columnKey].value.toString(),
-          softWrap: false,
-        ),
-      ));
-      columnKey++;
+      cells.add(CustomCell(row.getCells()[itemKey].value.toString()));
+      itemKey++;
     }
     return DataGridRowAdapter(
       color: backgroundColor,
@@ -128,10 +118,11 @@ class CustomDataSource extends DataGridSource {
     final int endIndex = startIndex + count;
     for (int i = startIndex; i < endIndex; i++) {
       Map<String, dynamic> addMap = {'id': '0000'};
-      int columnKey = 1;
+      int itemKey = 1;
       for (Map<String, String> map in items) {
-        addMap['column$columnKey'] = '11111111111';
-        columnKey++;
+        String columnName = 'column$itemKey';
+        addMap[columnName] = '1111111111$i';
+        itemKey++;
       }
       dataList.add(addMap);
     }

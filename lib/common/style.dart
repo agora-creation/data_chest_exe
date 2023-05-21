@@ -59,3 +59,5 @@ class TypeModel {
   String value;
   TypeModel(this.key, this.value);
 }
+
+const List<int> kRowsPerPages = [10, 20, 30, 40, 50];
