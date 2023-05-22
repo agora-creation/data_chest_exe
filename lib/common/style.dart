@@ -46,9 +46,9 @@ final kFormatTypeList =
     kFormatTypeData.entries.map((e) => TypeModel(e.key, e.value)).toList();
 
 const Map<String, String> kItemTypeData = {
-  'text': '文字列',
-  'number': '数値',
-  'datetime': '日時',
+  'TEXT': '文字列',
+  'INTEGER': '数値',
+  'DATETIME': '日時',
 };
 
 final kItemTypeList =

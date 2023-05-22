@@ -1,6 +1,7 @@
 import 'package:data_chest_exe/common/info_bar.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
+import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_icon.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
@@ -24,6 +25,7 @@ class FormatAddScreen extends StatefulWidget {
 }
 
 class _FormatAddScreenState extends State<FormatAddScreen> {
+  BackupService backupService = BackupService();
   FormatService formatService = FormatService();
   TextEditingController title = TextEditingController();
   TextEditingController remarks = TextEditingController();
@@ -137,13 +139,19 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   onPressed: () async {
                     if (title.text == '') return;
                     if (items.isEmpty) return;
-                    formatService.insert(FormatModel(
+                    await formatService.insert(FormatModel(
                       title: title.text,
                       remarks: remarks.text,
                       type: type,
                       items: items,
                     ));
+                    String tableName = type;
+                    await backupService.create(
+                      tableName: tableName,
+                      items: items,
+                    );
                     widget.resetIndex();
+                    if (!mounted) return;
                     showSuccessBar(context, 'フォーマットを追加しました');
                   },
                 ),

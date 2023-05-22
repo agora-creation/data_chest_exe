@@ -19,7 +19,7 @@ class BackupService {
       int itemKey = 1;
       for (Map<String, String> map in items) {
         String columnName = 'column$itemKey';
-        sql += '`$columnName` TEXT,';
+        sql += '`$columnName` ${map['type']},';
         itemKey++;
       }
       sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
