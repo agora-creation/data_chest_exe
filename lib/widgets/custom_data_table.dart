@@ -43,7 +43,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
     customDataSource = CustomDataSource(
       items: widget.items,
       backups: widget.backups,
-      backupsCount: widget.backups.length,
+      backupsCount: _rowsPerPage,
     );
     setState(() {});
   }
@@ -56,6 +56,7 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.backups);
     if (widget.backups.isEmpty) {
       return Center(child: Text('なにもない'));
     }

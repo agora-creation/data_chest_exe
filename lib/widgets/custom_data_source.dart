@@ -105,21 +105,26 @@ class CustomDataSource extends DataGridSource {
   }
 
   List<Map<String, dynamic>> getDataList(
-    List<Map<String, dynamic>> backups,
+    List<Map<String, dynamic>> dataList,
     int count,
   ) {
-    final int startIndex = backups.isNotEmpty ? backups.length : 0;
+    final int startIndex = dataList.isNotEmpty ? dataList.length : 0;
     final int endIndex = startIndex + count;
-    for (int i = startIndex; i < endIndex; i++) {
-      Map<String, dynamic> addMap = {'id': backups[i]['id']};
-      int itemKey = 1;
-      for (Map<String, String> map in items) {
-        String columnName = 'column$itemKey';
-        addMap[columnName] = backups[i][columnName];
-        itemKey++;
+    if (dataList.isNotEmpty) {
+      for (int i = startIndex; i < endIndex; i++) {
+        Map<String, dynamic> addMap = {
+          'id': dataList[i]['id'],
+        };
+        int itemKey = 1;
+        for (Map<String, String> map in items) {
+          String columnName = 'column$itemKey';
+          addMap[columnName] = dataList[i][columnName];
+          itemKey++;
+        }
+        dataList.add(addMap);
       }
-      backups.add(addMap);
     }
-    return backups;
+
+    return dataList;
   }
 }
