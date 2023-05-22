@@ -7,9 +7,11 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class CustomDataTable extends StatefulWidget {
   final List<Map<String, String>> items;
+  final List<Map<String, dynamic>> backups;
 
   const CustomDataTable({
     required this.items,
+    required this.backups,
     Key? key,
   }) : super(key: key);
 
@@ -21,7 +23,6 @@ class _CustomDataTableState extends State<CustomDataTable> {
   List<GridColumn> columns = [];
   int _rowsPerPage = kRowsPerPages.first;
   late CustomDataSource customDataSource;
-  List<Map<String, dynamic>> backups = [];
 
   void _init() {
     columns.add(GridColumn(
@@ -39,20 +40,10 @@ class _CustomDataTableState extends State<CustomDataTable> {
       );
       itemKey++;
     }
-    for (int i = 0; i < 100; i++) {
-      Map<String, dynamic> addMap = {'id': '0000'};
-      int itemKey = 1;
-      for (Map<String, String> map in widget.items) {
-        String columnName = 'column$itemKey';
-        addMap[columnName] = '11111111111';
-        itemKey++;
-      }
-      backups.add(addMap);
-    }
     customDataSource = CustomDataSource(
       items: widget.items,
-      backups: backups,
-      backupsCount: 300,
+      backups: widget.backups,
+      backupsCount: widget.backups.length,
     );
     setState(() {});
   }
@@ -65,6 +56,9 @@ class _CustomDataTableState extends State<CustomDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.backups.isEmpty) {
+      return Center(child: Text('なにもない'));
+    }
     return Column(
       children: [
         SizedBox(

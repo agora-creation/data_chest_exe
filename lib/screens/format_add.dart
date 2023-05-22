@@ -1,6 +1,5 @@
 import 'package:data_chest_exe/common/info_bar.dart';
 import 'package:data_chest_exe/common/style.dart';
-import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_icon.dart';
@@ -139,13 +138,13 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   onPressed: () async {
                     if (title.text == '') return;
                     if (items.isEmpty) return;
-                    await formatService.insert(FormatModel(
+                    int newId = await formatService.insert(
                       title: title.text,
                       remarks: remarks.text,
                       type: type,
                       items: items,
-                    ));
-                    String tableName = type;
+                    );
+                    String tableName = '$type$newId';
                     await backupService.create(
                       tableName: tableName,
                       items: items,

@@ -58,7 +58,7 @@ void showFormatDeleteDialog({
           labelColor: whiteColor,
           backgroundColor: redColor,
           onPressed: () async {
-            formatService.delete(format);
+            formatService.delete(id: format.id ?? 0);
             resetIndex();
             Navigator.pop(context);
             showSuccessBar(context, 'フォーマットを削除しました');

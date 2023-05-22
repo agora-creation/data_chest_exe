@@ -6,14 +6,14 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 class CustomDataSource extends DataGridSource {
   List<Map<String, String>> items;
   List<Map<String, dynamic>> backups = [];
-  int? backupsCount;
+  int backupsCount = 0;
 
   CustomDataSource({
     required this.items,
     required this.backups,
     required this.backupsCount,
   }) {
-    backups = getDataList(backups, backupsCount ?? 100);
+    backups = getDataList(backups, backupsCount);
     buildDataGridRows();
   }
 
@@ -59,7 +59,7 @@ class CustomDataSource extends DataGridSource {
   @override
   Future<void> handleLoadMoreRows() async {
     await Future<void>.delayed(const Duration(seconds: 5));
-    backups = getDataList(backups, 15);
+    backups = getDataList(backups, backupsCount);
     buildDataGridRows();
     notifyListeners();
   }
@@ -67,7 +67,7 @@ class CustomDataSource extends DataGridSource {
   @override
   Future<void> handleRefresh() async {
     await Future<void>.delayed(const Duration(seconds: 5));
-    backups = getDataList(backups, 15);
+    backups = getDataList(backups, backupsCount);
     buildDataGridRows();
     notifyListeners();
   }
@@ -111,11 +111,11 @@ class CustomDataSource extends DataGridSource {
     final int startIndex = backups.isNotEmpty ? backups.length : 0;
     final int endIndex = startIndex + count;
     for (int i = startIndex; i < endIndex; i++) {
-      Map<String, dynamic> addMap = {'id': '0000'};
+      Map<String, dynamic> addMap = {'id': backups[i]['id']};
       int itemKey = 1;
       for (Map<String, String> map in items) {
         String columnName = 'column$itemKey';
-        addMap[columnName] = '1111111111$i';
+        addMap[columnName] = backups[i][columnName];
         itemKey++;
       }
       backups.add(addMap);

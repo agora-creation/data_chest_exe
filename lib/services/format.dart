@@ -11,70 +11,53 @@ class FormatService {
     return await connection.db;
   }
 
-  Future<FormatModel> insert(FormatModel formatModel) async {
-    String itemsJson = json.encode(formatModel.items);
+  Future<List<FormatModel>> select() async {
     try {
       Database db = await _getDatabase();
-      int id = await db.rawInsert('''
+      List<Map> listMap = await db.rawQuery('select * from format');
+      return FormatModel.fromSQLiteList(listMap);
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  Future<int> insert({
+    required String title,
+    required String remarks,
+    required String type,
+    required List<Map<String, String>> items,
+  }) async {
+    try {
+      Database db = await _getDatabase();
+      int newId = await db.rawInsert('''
         insert into format (
           title,
           remarks,
           type,
           items
         ) values (
-          '${formatModel.title}',
-          '${formatModel.remarks}',
-          '${formatModel.type}',
-          '$itemsJson'
+          '$title',
+          '$remarks',
+          '$type',
+          '${json.encode(items)}'
         );
       ''');
-      formatModel.id = id;
-      return formatModel;
+      return newId;
     } catch (e) {
       throw Exception();
     }
   }
 
-  Future<bool> update(FormatModel formatModel) async {
+  Future<bool> delete({required int id}) async {
     try {
       Database db = await _getDatabase();
-      int id = await db.rawUpdate('''
-        update format set
-        title = '${formatModel.title}',
-        remarks = '${formatModel.remarks}',
-        type = '${formatModel.type}',
-        items = '${formatModel.items}'
-        where id = ${formatModel.id};
-      ''');
-      if (id > 0) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      throw Exception();
-    }
-  }
-
-  Future<bool> delete(FormatModel formatModel) async {
-    try {
-      Database db = await _getDatabase();
-      int id = await db.rawDelete(
-        'delete from format where id = ${formatModel.id};',
+      int newId = await db.rawDelete(
+        'delete from format where id = $id;',
       );
-      if (id > 0) {
+      if (newId > 0) {
         return true;
       }
       return false;
-    } catch (e) {
-      throw Exception();
-    }
-  }
-
-  Future<List<FormatModel>> select() async {
-    try {
-      Database db = await _getDatabase();
-      List<Map> listMap = await db.rawQuery('select * from format');
-      return FormatModel.fromSQLiteList(listMap);
     } catch (e) {
       throw Exception();
     }

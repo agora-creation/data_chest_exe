@@ -49,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ));
             });
           }
-
           return NavigationView(
             appBar: NavigationAppBar(
               automaticallyImplyLeading: false,

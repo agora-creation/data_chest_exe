@@ -1,6 +1,7 @@
 import 'package:data_chest_exe/common/dialog.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
+import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
@@ -22,6 +23,7 @@ class FormatDetailsScreen extends StatefulWidget {
 }
 
 class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
+  BackupService backupService = BackupService();
   FormatService formatService = FormatService();
 
   @override
@@ -108,8 +110,22 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    CustomDataTable(
-                      items: widget.format.items,
+                    FutureBuilder(
+                      future: backupService.select(
+                        tableName: '${widget.format.type}${widget.format.id}',
+                      ),
+                      builder: (context, snapshot) {
+                        List<Map<String, dynamic>> backups = [];
+                        if (snapshot.hasData) {
+                          snapshot.data?.forEach((backup) {
+                            backups.add(backup);
+                          });
+                        }
+                        return CustomDataTable(
+                          items: widget.format.items,
+                          backups: backups,
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -135,8 +151,12 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   labelText: 'データを追加する',
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
-                  onPressed: () {
-                    showDataAddDialog(context: context);
+                  onPressed: () async {
+                    await backupService.insert(
+                      tableName: '${widget.format.type}${widget.format.id}',
+                      items: widget.format.items,
+                    );
+                    //showDataAddDialog(context: context);
                   },
                 ),
               ],
