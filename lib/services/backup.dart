@@ -8,17 +8,6 @@ class BackupService {
     return await connection.db;
   }
 
-  Future<List<Map<String, dynamic>>> select({required String tableName}) async {
-    try {
-      Database db = await _getDatabase();
-      List<Map<String, dynamic>> listMap =
-          await db.rawQuery('select * from $tableName');
-      return listMap;
-    } catch (e) {
-      throw Exception();
-    }
-  }
-
   Future create({
     required String tableName,
     required List<Map<String, String>> items,
@@ -40,6 +29,17 @@ class BackupService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> select({required String tableName}) async {
+    try {
+      Database db = await _getDatabase();
+      List<Map<String, dynamic>> listMap =
+          await db.rawQuery('select * from $tableName order by createdAt DESC');
+      return listMap;
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
   Future<int> insert({
     required String tableName,
     required List<Map<String, String>> items,
@@ -54,12 +54,26 @@ class BackupService {
         if (columnSql != '') columnSql += ',';
         columnSql += columnName;
         if (valuesSql != '') valuesSql += ',';
-        valuesSql += '\'$columnName\'';
+        valuesSql += "'テスト'";
+        itemKey++;
       }
       int newId = await db.rawInsert(
         'insert into $tableName ( $columnSql ) values ( $valuesSql );',
       );
       return newId;
+    } catch (e) {
+      throw Exception();
+    }
+  }
+
+  Future<bool> tableDelete({required String tableName}) async {
+    try {
+      Database db = await _getDatabase();
+      int flg = await db.delete(tableName);
+      if (flg > 0) {
+        return true;
+      }
+      return false;
     } catch (e) {
       throw Exception();
     }

@@ -1,12 +1,14 @@
 import 'package:data_chest_exe/common/dialog.dart';
+import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
+import 'package:data_chest_exe/screens/backup_source.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
-import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class FormatDetailsScreen extends StatefulWidget {
   final FormatModel format;
@@ -23,8 +25,26 @@ class FormatDetailsScreen extends StatefulWidget {
 }
 
 class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
-  BackupService backupService = BackupService();
   FormatService formatService = FormatService();
+  BackupService backupService = BackupService();
+  List<Map<String, dynamic>> backups = [];
+
+  void _getBackups() async {
+    List<Map<String, dynamic>> tmpBackups = await backupService.select(
+      tableName: '${widget.format.type}${widget.format.id}',
+    );
+    if (mounted) {
+      setState(() {
+        backups = tmpBackups;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getBackups();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +70,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   backgroundColor: redColor,
                   onPressed: () => showFormatDeleteDialog(
                     context: context,
+                    backupService: backupService,
                     formatService: formatService,
                     format: widget.format,
                     resetIndex: widget.resetIndex,
@@ -109,23 +130,32 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    FutureBuilder(
-                      future: backupService.select(
-                        tableName: '${widget.format.type}${widget.format.id}',
+                    const SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '${backups.length}件表示中',
+                        style: const TextStyle(
+                          color: greyColor,
+                          fontSize: 12,
+                        ),
                       ),
-                      builder: (context, snapshot) {
-                        List<Map<String, dynamic>> backups = [];
-                        if (snapshot.hasData) {
-                          snapshot.data?.forEach((backup) {
-                            backups.add(backup);
-                          });
-                        }
-                        return CustomDataTable(
-                          items: widget.format.items,
-                          backups: backups,
-                        );
-                      },
+                    ),
+                    const SizedBox(height: 4),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 380,
+                          child: SfDataGrid(
+                            source: BackupSource(
+                              items: widget.format.items,
+                              backups: backups,
+                            ),
+                            columnWidthMode: ColumnWidthMode.none,
+                            columns: generateColumns(widget.format.items),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -151,12 +181,13 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   labelText: 'データを追加する',
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
-                  onPressed: () async {
-                    await backupService.insert(
-                      tableName: '${widget.format.type}${widget.format.id}',
-                      items: widget.format.items,
+                  onPressed: () {
+                    showDataAddDialog(
+                      context: context,
+                      backupService: backupService,
+                      format: widget.format,
+                      getBackups: _getBackups,
                     );
-                    //showDataAddDialog(context: context);
                   },
                 ),
               ],

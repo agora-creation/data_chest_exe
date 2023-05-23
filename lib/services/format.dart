@@ -51,10 +51,10 @@ class FormatService {
   Future<bool> delete({required int id}) async {
     try {
       Database db = await _getDatabase();
-      int newId = await db.rawDelete(
+      int flg = await db.rawDelete(
         'delete from format where id = $id;',
       );
-      if (newId > 0) {
+      if (flg > 0) {
         return true;
       }
       return false;

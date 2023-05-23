@@ -46,24 +46,24 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
     items.clear();
     switch (type) {
       case 'csv':
-        items.add({'name': '会員番号', 'type': 'text'});
-        items.add({'name': '姓', 'type': 'text'});
-        items.add({'name': '名', 'type': 'text'});
-        items.add({'name': '郵便番号', 'type': 'text'});
-        items.add({'name': '住所', 'type': 'text'});
-        items.add({'name': '電話番号', 'type': 'text'});
+        items.add({'name': '会員番号', 'type': 'TEXT'});
+        items.add({'name': '姓', 'type': 'TEXT'});
+        items.add({'name': '名', 'type': 'TEXT'});
+        items.add({'name': '郵便番号', 'type': 'TEXT'});
+        items.add({'name': '住所', 'type': 'TEXT'});
+        items.add({'name': '電話番号', 'type': 'TEXT'});
         break;
       case 'pdf':
-        items.add({'name': '発行日', 'type': 'datetime'});
-        items.add({'name': '番号', 'type': 'text'});
-        items.add({'name': '送り先', 'type': 'text'});
-        items.add({'name': '金額', 'type': 'text'});
+        items.add({'name': '発行日', 'type': 'DATETIME'});
+        items.add({'name': '番号', 'type': 'TEXT'});
+        items.add({'name': '送り先', 'type': 'TEXT'});
+        items.add({'name': '金額', 'type': 'TEXT'});
         break;
       case 'img':
-        items.add({'name': '発行日', 'type': 'datetime'});
-        items.add({'name': '番号', 'type': 'text'});
-        items.add({'name': '送り先', 'type': 'text'});
-        items.add({'name': '金額', 'type': 'text'});
+        items.add({'name': '発行日', 'type': 'DATETIME'});
+        items.add({'name': '番号', 'type': 'TEXT'});
+        items.add({'name': '送り先', 'type': 'TEXT'});
+        items.add({'name': '金額', 'type': 'TEXT'});
         break;
     }
     _rebuildItemRows();
