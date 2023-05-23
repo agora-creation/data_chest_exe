@@ -149,7 +149,7 @@ void showDataAddDialog({
               );
               final XFile? file = await openFile(acceptedTypeGroups: [group]);
               if (file != null) {
-                final csv = await file.readAsString();
+                String csv = await file.readAsString();
                 for (String line in csv.split('\n')) {
                   List rows = line.split(',');
                   print(rows);
