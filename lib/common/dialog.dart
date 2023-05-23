@@ -120,7 +120,7 @@ void showDataAddDialog({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '※一行目が下記のようなCSVをアップロードしてください',
+            '※文字コードは「utf-8」にしてください\n※一行目が下記のようなCSVをアップロードしてください',
             style: TextStyle(
               color: redColor,
               fontSize: 12,
@@ -148,7 +148,13 @@ void showDataAddDialog({
                 extensions: ['csv'],
               );
               final XFile? file = await openFile(acceptedTypeGroups: [group]);
-              if (file != null) {}
+              if (file != null) {
+                final csv = await file.readAsString();
+                for (String line in csv.split('\n')) {
+                  List rows = line.split(',');
+                  print(rows);
+                }
+              }
             },
           ),
         ],
