@@ -328,34 +328,34 @@ class BackupAddDialog extends StatefulWidget {
 
 class _BackupAddDialogState extends State<BackupAddDialog> {
   XFile? file;
-  List<dynamic> forms = [];
+  List<String> formsController = [];
+  List<Widget> formsWidget = [];
 
-  @override
-  void initState() {
-    super.initState();
+  void _init() {
     int itemKey = 1;
     for (Map<String, String> map in widget.format.items) {
-      forms.insert(itemKey, 'test');
-      itemKey++;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    List<Widget> formChildren = [];
-    int itemKey = 1;
-    for (Map<String, String> map in widget.format.items) {
-      formChildren.add(InfoLabel(
+      formsController.add('test');
+      formsWidget.add(InfoLabel(
         label: map['name'].toString(),
         child: CustomTextBox(
-          controller: TextEditingController(text: forms[itemKey]),
+          controller: TextEditingController(text: 'test'),
           onChanged: (value) {
-            forms[itemKey] = value;
+            formsController[itemKey - 1] = value;
           },
         ),
       ));
       itemKey++;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text(
         'データを追加する',
@@ -388,7 +388,7 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
           ),
           const SizedBox(height: 8),
           widget.format.type != 'csv'
-              ? Column(children: formChildren)
+              ? Column(children: formsWidget)
               : Container(),
         ],
       ),
