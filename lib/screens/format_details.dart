@@ -5,6 +5,7 @@ import 'package:data_chest_exe/screens/backup_source.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
+import 'package:data_chest_exe/widgets/custom_file_button.dart';
 import 'package:data_chest_exe/widgets/custom_file_caution.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
@@ -134,7 +135,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -328,23 +329,15 @@ class BackupAddDialog extends StatefulWidget {
 
 class _BackupAddDialogState extends State<BackupAddDialog> {
   XFile? file;
-  List<String> formsController = [];
-  List<Widget> formsWidget = [];
+  List<Map<String, String>> forms = [];
 
   void _init() {
-    int itemKey = 1;
     for (Map<String, String> map in widget.format.items) {
-      formsController.add('test');
-      formsWidget.add(InfoLabel(
-        label: map['name'].toString(),
-        child: CustomTextBox(
-          controller: TextEditingController(text: 'test'),
-          onChanged: (value) {
-            formsController[itemKey - 1] = value;
-          },
-        ),
-      ));
-      itemKey++;
+      forms.add({
+        'name': map['name'].toString(),
+        'type': map['type'].toString(),
+        'value': '',
+      });
     }
   }
 
@@ -367,28 +360,36 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
         children: [
           CustomFileCaution(format: widget.format),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              CustomButton(
-                labelText: 'ファイル選択',
-                labelColor: blackColor,
-                backgroundColor: grey2Color,
-                onPressed: () async {
-                  XFile? tmpFile = await getFile(widget.format);
-                  if (tmpFile != null) {
-                    setState(() {
-                      file = tmpFile;
-                    });
-                  }
-                },
-              ),
-              const SizedBox(width: 4),
-              file != null ? Text('${file?.name}') : Container(),
-            ],
+          CustomFileButton(
+            file: file,
+            onPressed: () async {
+              XFile? tmpFile = await getFile(widget.format);
+              if (tmpFile != null) {
+                setState(() {
+                  file = tmpFile;
+                });
+              }
+            },
           ),
           const SizedBox(height: 8),
           widget.format.type != 'csv'
-              ? Column(children: formsWidget)
+              ? Column(
+                  children: forms.map((e) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: InfoLabel(
+                      label: e['name'].toString(),
+                      child: CustomTextBox(
+                        controller: TextEditingController(
+                          text: e['value'].toString(),
+                        ),
+                        onChanged: (value) {
+                          e['value'] = value;
+                        },
+                      ),
+                    ),
+                  );
+                }).toList())
               : Container(),
         ],
       ),
@@ -409,6 +410,7 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
               backupService: widget.backupService,
               format: widget.format,
               file: file!,
+              forms: forms,
             );
             widget.getBackups();
             if (!mounted) return;

@@ -16,7 +16,6 @@ class CustomFileCaution extends StatelessWidget {
     switch (format.type) {
       case 'csv':
         widget = Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
@@ -42,7 +41,6 @@ class CustomFileCaution extends StatelessWidget {
         break;
       case 'pdf':
         widget = const Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -57,7 +55,6 @@ class CustomFileCaution extends StatelessWidget {
         break;
       case 'img':
         widget = const Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(

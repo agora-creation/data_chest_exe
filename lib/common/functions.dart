@@ -93,6 +93,7 @@ Future insertBackup({
   required BackupService backupService,
   required FormatModel format,
   required XFile file,
+  required List<Map<String, String>> forms,
 }) async {
   switch (format.type) {
     case 'csv':
@@ -116,6 +117,21 @@ Future insertBackup({
       }
       break;
     case 'pdf':
+      final dir = await getApplicationDocumentsDirectory();
+      dir.path;
+      String savedPath = '${dir.path}/${p.basename(file.path)}';
+      File savedFile = File(savedPath);
+      await savedFile.writeAsBytes(await file.readAsBytes());
+      List<String> data = [];
+      for (Map<String, String> map in forms) {
+        data.add(map['value'].toString());
+      }
+      data.add(savedPath);
+      await backupService.insert(
+        tableName: '${format.type}${format.id}',
+        format: format,
+        data: data,
+      );
       break;
     case 'img':
       final dir = await getApplicationDocumentsDirectory();
@@ -124,10 +140,8 @@ Future insertBackup({
       File savedFile = File(savedPath);
       await savedFile.writeAsBytes(await file.readAsBytes());
       List<String> data = [];
-      int itemKey = 1;
-      for (Map<String, String> map in format.items) {
-        data.add('$itemKey');
-        itemKey++;
+      for (Map<String, String> map in forms) {
+        data.add(map['value'].toString());
       }
       data.add(savedPath);
       await backupService.insert(
