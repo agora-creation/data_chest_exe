@@ -30,11 +30,24 @@ class FormatDetailsScreen extends StatefulWidget {
 class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
   FormatService formatService = FormatService();
   BackupService backupService = BackupService();
+  List<Map<String, String>> searchData = [];
   List<Map<String, dynamic>> backups = [];
+
+  void _clearSearchData() {
+    searchData.clear();
+    for (Map<String, String> map in widget.format.items) {
+      searchData.add({
+        'name': map['name'].toString(),
+        'type': map['type'].toString(),
+        'value': '',
+      });
+    }
+  }
 
   void _getBackups() async {
     List<Map<String, dynamic>> tmpBackups = await backupService.select(
       tableName: '${widget.format.type}${widget.format.id}',
+      searchData: searchData,
     );
     if (mounted) {
       setState(() {
@@ -46,6 +59,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    _clearSearchData();
     _getBackups();
   }
 
@@ -100,12 +114,19 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                         children: [
                           GridView.builder(
                             shrinkWrap: true,
-                            itemCount: widget.format.items.length,
+                            itemCount: searchData.length,
                             gridDelegate: kSearchGrid,
                             itemBuilder: (context, index) {
                               return InfoLabel(
-                                label: '${widget.format.items[index]['name']}',
-                                child: const CustomTextBox(),
+                                label: searchData[index]['name'].toString(),
+                                child: CustomTextBox(
+                                  controller: TextEditingController(
+                                    text: searchData[index]['value'].toString(),
+                                  ),
+                                  onChanged: (value) {
+                                    searchData[index]['value'] = value;
+                                  },
+                                ),
                               );
                             },
                           ),
@@ -119,7 +140,10 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                 labelText: '検索クリア',
                                 labelColor: lightBlueColor,
                                 backgroundColor: whiteColor,
-                                onPressed: () {},
+                                onPressed: () {
+                                  _clearSearchData();
+                                  _getBackups();
+                                },
                               ),
                               const SizedBox(width: 8),
                               CustomIconButton(
@@ -128,7 +152,9 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                 labelText: '検索する',
                                 labelColor: whiteColor,
                                 backgroundColor: lightBlueColor,
-                                onPressed: () {},
+                                onPressed: () {
+                                  _getBackups();
+                                },
                               ),
                             ],
                           ),

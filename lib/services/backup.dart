@@ -31,11 +31,23 @@ class BackupService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> select({required String tableName}) async {
+  Future<List<Map<String, dynamic>>> select({
+    required String tableName,
+    required List<Map<String, String>> searchData,
+  }) async {
     try {
       Database db = await _getDatabase();
-      List<Map<String, dynamic>> listMap =
-          await db.rawQuery('select * from $tableName order by createdAt DESC');
+      String sql = 'select * from $tableName where id != 0';
+      int itemKey = 1;
+      for (Map<String, String> map in searchData) {
+        String columnName = 'column$itemKey';
+        if (map['value'] != '') {
+          sql += " and $columnName like '%${map['value']}%'";
+        }
+        itemKey++;
+      }
+      sql += ' order by createdAt DESC';
+      List<Map<String, dynamic>> listMap = await db.rawQuery(sql);
       return listMap;
     } catch (e) {
       throw Exception();

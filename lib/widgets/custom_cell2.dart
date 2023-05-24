@@ -28,12 +28,6 @@ class CustomCell2 extends StatelessWidget {
                   backgroundColor: greyColor,
                   onPressed: () => Navigator.pop(context),
                 ),
-                CustomButton(
-                  labelText: 'ダウンロード',
-                  labelColor: whiteColor,
-                  backgroundColor: blueColor,
-                  onPressed: () => Navigator.pop(context),
-                ),
               ],
             ),
           );
@@ -47,12 +41,6 @@ class CustomCell2 extends StatelessWidget {
                   labelText: '閉じる',
                   labelColor: whiteColor,
                   backgroundColor: greyColor,
-                  onPressed: () => Navigator.pop(context),
-                ),
-                CustomButton(
-                  labelText: 'ダウンロード',
-                  labelColor: whiteColor,
-                  backgroundColor: blueColor,
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
