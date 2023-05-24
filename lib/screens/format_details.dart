@@ -329,11 +329,11 @@ class BackupAddDialog extends StatefulWidget {
 
 class _BackupAddDialogState extends State<BackupAddDialog> {
   XFile? file;
-  List<Map<String, String>> forms = [];
+  List<Map<String, String>> addData = [];
 
   void _init() {
     for (Map<String, String> map in widget.format.items) {
-      forms.add({
+      addData.add({
         'name': map['name'].toString(),
         'type': map['type'].toString(),
         'value': '',
@@ -374,7 +374,7 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
           const SizedBox(height: 8),
           widget.format.type != 'csv'
               ? Column(
-                  children: forms.map((e) {
+                  children: addData.map((e) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: InfoLabel(
@@ -410,7 +410,7 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
               backupService: widget.backupService,
               format: widget.format,
               file: file!,
-              forms: forms,
+              addData: addData,
             );
             widget.getBackups();
             if (!mounted) return;
