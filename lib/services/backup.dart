@@ -1,3 +1,4 @@
+import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/connection_sqlite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -22,6 +23,7 @@ class BackupService {
         sql += '`$columnName` ${map['type']},';
         itemKey++;
       }
+      sql += '`path` TEXT,';
       sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
       await db.execute(sql);
     } catch (e) {
@@ -42,21 +44,24 @@ class BackupService {
 
   Future<int> insert({
     required String tableName,
-    required List<Map<String, String>> items,
+    required FormatModel format,
+    required List<String> data,
   }) async {
     try {
       Database db = await _getDatabase();
       String columnSql = '';
       String valuesSql = '';
       int itemKey = 1;
-      for (Map<String, String> map in items) {
+      for (Map<String, String> map in format.items) {
         String columnName = 'column$itemKey';
         if (columnSql != '') columnSql += ',';
         columnSql += columnName;
         if (valuesSql != '') valuesSql += ',';
-        valuesSql += "'テスト'";
+        valuesSql += "'${data[itemKey - 1]}'";
         itemKey++;
       }
+      columnSql += ',path';
+      valuesSql += ",'${data[itemKey - 1]}'";
       int newId = await db.rawInsert(
         'insert into $tableName ( $columnSql ) values ( $valuesSql );',
       );
@@ -66,7 +71,7 @@ class BackupService {
     }
   }
 
-  Future<bool> tableDelete({required String tableName}) async {
+  Future<bool> delete({required String tableName}) async {
     try {
       Database db = await _getDatabase();
       int flg = await db.delete(tableName);

@@ -1,4 +1,3 @@
-import 'package:data_chest_exe/common/info_bar.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
@@ -151,7 +150,12 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                     );
                     widget.resetIndex();
                     if (!mounted) return;
-                    showSuccessBar(context, 'フォーマットを追加しました');
+                    displayInfoBar(context, builder: (context, close) {
+                      return const InfoBar(
+                        title: Text('フォーマットを追加しました'),
+                        severity: InfoBarSeverity.success,
+                      );
+                    });
                   },
                 ),
               ],

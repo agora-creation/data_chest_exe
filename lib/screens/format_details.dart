@@ -1,12 +1,14 @@
-import 'package:data_chest_exe/common/dialog.dart';
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/screens/backup_source.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
+import 'package:data_chest_exe/widgets/custom_button.dart';
+import 'package:data_chest_exe/widgets/custom_file_caution.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -68,12 +70,14 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   labelText: '${widget.format.paneTitle()}を削除する',
                   labelColor: whiteColor,
                   backgroundColor: redColor,
-                  onPressed: () => showFormatDeleteDialog(
+                  onPressed: () => showDialog(
                     context: context,
-                    backupService: backupService,
-                    formatService: formatService,
-                    format: widget.format,
-                    resetIndex: widget.resetIndex,
+                    builder: (context) => FormatDeleteDialog(
+                      backupService: backupService,
+                      formatService: formatService,
+                      format: widget.format,
+                      resetIndex: widget.resetIndex,
+                    ),
                   ),
                 ),
               ],
@@ -148,11 +152,11 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                           height: 380,
                           child: SfDataGrid(
                             source: BackupSource(
-                              items: widget.format.items,
+                              format: widget.format,
                               backups: backups,
                             ),
-                            columnWidthMode: ColumnWidthMode.none,
-                            columns: generateColumns(widget.format.items),
+                            columns: generateColumns(widget.format),
+                            columnWidthMode: ColumnWidthMode.auto,
                           ),
                         ),
                       ],
@@ -171,9 +175,14 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   labelText: 'データを削除する',
                   labelColor: redColor,
                   backgroundColor: whiteColor,
-                  onPressed: () {
-                    showDataDeleteDialog(context: context);
-                  },
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => BackupDeleteDialog(
+                      backupService: backupService,
+                      format: widget.format,
+                      getBackups: _getBackups,
+                    ),
+                  ),
                 ),
                 CustomIconButton(
                   iconData: FluentIcons.add,
@@ -181,20 +190,232 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   labelText: 'データを追加する',
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
-                  onPressed: () {
-                    showDataAddDialog(
-                      context: context,
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => BackupAddDialog(
                       backupService: backupService,
                       format: widget.format,
                       getBackups: _getBackups,
-                    );
-                  },
+                    ),
+                  ),
                 ),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class FormatDeleteDialog extends StatefulWidget {
+  final BackupService backupService;
+  final FormatService formatService;
+  final FormatModel format;
+  final Function resetIndex;
+
+  const FormatDeleteDialog({
+    required this.backupService,
+    required this.formatService,
+    required this.format,
+    required this.resetIndex,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<FormatDeleteDialog> createState() => _FormatDeleteDialogState();
+}
+
+class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: Text(
+        '${widget.format.paneTitle()}を削除する',
+        style: const TextStyle(fontSize: 18),
+      ),
+      content: const Text('削除すると、データも全て削除されます。\nよろしいですか？'),
+      actions: [
+        CustomButton(
+          labelText: 'いいえ',
+          labelColor: whiteColor,
+          backgroundColor: greyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButton(
+          labelText: 'はい',
+          labelColor: whiteColor,
+          backgroundColor: redColor,
+          onPressed: () async {
+            await widget.formatService.delete(id: widget.format.id ?? 0);
+            await widget.backupService
+                .delete(tableName: '${widget.format.type}${widget.format.id}');
+            widget.resetIndex();
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class BackupDeleteDialog extends StatefulWidget {
+  final BackupService backupService;
+  final FormatModel format;
+  final Function getBackups;
+
+  const BackupDeleteDialog({
+    required this.backupService,
+    required this.format,
+    required this.getBackups,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<BackupDeleteDialog> createState() => _BackupDeleteDialogState();
+}
+
+class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        'データを削除する',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const Text('データを全て削除します。\nよろしいですか？'),
+      actions: [
+        CustomButton(
+          labelText: 'いいえ',
+          labelColor: whiteColor,
+          backgroundColor: greyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButton(
+          labelText: 'はい',
+          labelColor: whiteColor,
+          backgroundColor: redColor,
+          onPressed: () async {
+            await widget.backupService.delete(
+              tableName: '${widget.format.type}${widget.format.id}',
+            );
+            widget.getBackups();
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class BackupAddDialog extends StatefulWidget {
+  final BackupService backupService;
+  final FormatModel format;
+  final Function getBackups;
+
+  const BackupAddDialog({
+    required this.backupService,
+    required this.format,
+    required this.getBackups,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<BackupAddDialog> createState() => _BackupAddDialogState();
+}
+
+class _BackupAddDialogState extends State<BackupAddDialog> {
+  XFile? file;
+  List<dynamic> forms = [];
+
+  @override
+  void initState() {
+    super.initState();
+    int itemKey = 1;
+    for (Map<String, String> map in widget.format.items) {
+      forms.insert(itemKey, 'test');
+      itemKey++;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<Widget> formChildren = [];
+    int itemKey = 1;
+    for (Map<String, String> map in widget.format.items) {
+      formChildren.add(InfoLabel(
+        label: map['name'].toString(),
+        child: CustomTextBox(
+          controller: TextEditingController(text: forms[itemKey]),
+          onChanged: (value) {
+            forms[itemKey] = value;
+          },
+        ),
+      ));
+      itemKey++;
+    }
+    return ContentDialog(
+      title: const Text(
+        'データを追加する',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomFileCaution(format: widget.format),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              CustomButton(
+                labelText: 'ファイル選択',
+                labelColor: blackColor,
+                backgroundColor: grey2Color,
+                onPressed: () async {
+                  XFile? tmpFile = await getFile(widget.format);
+                  if (tmpFile != null) {
+                    setState(() {
+                      file = tmpFile;
+                    });
+                  }
+                },
+              ),
+              const SizedBox(width: 4),
+              file != null ? Text('${file?.name}') : Container(),
+            ],
+          ),
+          const SizedBox(height: 8),
+          widget.format.type != 'csv'
+              ? Column(children: formChildren)
+              : Container(),
+        ],
+      ),
+      actions: [
+        CustomButton(
+          labelText: 'いいえ',
+          labelColor: whiteColor,
+          backgroundColor: greyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButton(
+          labelText: 'はい',
+          labelColor: whiteColor,
+          backgroundColor: blueColor,
+          onPressed: () async {
+            if (file == null) return;
+            await insertBackup(
+              backupService: widget.backupService,
+              format: widget.format,
+              file: file!,
+            );
+            widget.getBackups();
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
+        ),
+      ],
     );
   }
 }
