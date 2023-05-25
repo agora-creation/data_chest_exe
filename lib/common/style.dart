@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-const double windowWidth = 1280;
-const double windowHeight = 720;
+const double windowWidth = 1920;
+const double windowHeight = 1080;
 
 const String appTitle = 'データの箪笥【データンス】';
 

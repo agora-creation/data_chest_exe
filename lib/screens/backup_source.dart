@@ -36,14 +36,14 @@ class BackupSource extends DataGridSource {
       backgroundColor = whiteColor;
     }
     List<Widget> cells = [];
-    cells.add(CustomCell(row.getCells()[0].value.toString()));
+    cells.add(CustomCell('${row.getCells()[0].value}'));
     int itemKey = 1;
     for (Map<String, String> map in format.items) {
-      cells.add(CustomCell(row.getCells()[itemKey].value.toString()));
+      cells.add(CustomCell('${row.getCells()[itemKey].value}'));
       itemKey++;
     }
     if (format.type != 'csv') {
-      cells.add(CustomCell2(row.getCells()[itemKey].value.toString()));
+      cells.add(CustomCell2('${row.getCells()[itemKey].value}'));
     }
     return DataGridRowAdapter(color: backgroundColor, cells: cells);
   }

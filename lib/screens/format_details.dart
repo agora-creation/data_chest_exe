@@ -37,8 +37,8 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
     searchData.clear();
     for (Map<String, String> map in widget.format.items) {
       searchData.add({
-        'name': map['name'].toString(),
-        'type': map['type'].toString(),
+        'name': '${map['name']}',
+        'type': '${map['type']}',
         'value': '',
       });
     }
@@ -118,10 +118,10 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                             gridDelegate: kSearchGrid,
                             itemBuilder: (context, index) {
                               return InfoLabel(
-                                label: searchData[index]['name'].toString(),
+                                label: '${searchData[index]['name']}',
                                 child: CustomTextBox(
                                   controller: TextEditingController(
-                                    text: searchData[index]['value'].toString(),
+                                    text: '${searchData[index]['value']}',
                                   ),
                                   onChanged: (value) {
                                     searchData[index]['value'] = value;
@@ -274,11 +274,23 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
           labelColor: whiteColor,
           backgroundColor: redColor,
           onPressed: () async {
-            await widget.formatService.delete(id: widget.format.id ?? 0);
-            await widget.backupService
-                .delete(tableName: '${widget.format.type}${widget.format.id}');
+            if (!await widget.formatService.delete(
+              id: widget.format.id ?? 0,
+            )) {
+              if (!mounted) return;
+              showMessage(context, 'フォーマットの削除に失敗しました', false);
+              return;
+            }
+            if (!await widget.backupService.delete(
+              tableName: '${widget.format.type}${widget.format.id}',
+            )) {
+              if (!mounted) return;
+              showMessage(context, 'データの削除に失敗しました', false);
+              return;
+            }
             widget.resetIndex();
             if (!mounted) return;
+            showMessage(context, 'フォーマットを削除しました', true);
             Navigator.pop(context);
           },
         ),
@@ -324,11 +336,16 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
           labelColor: whiteColor,
           backgroundColor: redColor,
           onPressed: () async {
-            await widget.backupService.delete(
+            if (!await widget.backupService.delete(
               tableName: '${widget.format.type}${widget.format.id}',
-            );
+            )) {
+              if (!mounted) return;
+              showMessage(context, 'データの削除に失敗しました', false);
+              return;
+            }
             widget.getBackups();
             if (!mounted) return;
+            showMessage(context, 'データを削除しました', true);
             Navigator.pop(context);
           },
         ),
@@ -360,8 +377,8 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
   void _init() {
     for (Map<String, String> map in widget.format.items) {
       addData.add({
-        'name': map['name'].toString(),
-        'type': map['type'].toString(),
+        'name': '${map['name']}',
+        'type': '${map['type']}',
         'value': '',
       });
     }
@@ -404,10 +421,10 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: InfoLabel(
-                      label: e['name'].toString(),
+                      label: '${e['name']}',
                       child: CustomTextBox(
                         controller: TextEditingController(
-                          text: e['value'].toString(),
+                          text: '${e['value']}',
                         ),
                         onChanged: (value) {
                           e['value'] = value;
@@ -440,6 +457,7 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
             );
             widget.getBackups();
             if (!mounted) return;
+            showMessage(context, 'データを追加しました', true);
             Navigator.pop(context);
           },
         ),

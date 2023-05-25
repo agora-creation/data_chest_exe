@@ -4,9 +4,20 @@ import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/widgets/custom_column_label.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+
+void showMessage(BuildContext context, String msg, bool success) {
+  displayInfoBar(context, builder: (context, close) {
+    return InfoBar(
+      title: Text(msg),
+      severity:
+          success == true ? InfoBarSeverity.success : InfoBarSeverity.error,
+    );
+  });
+}
 
 List<GridColumn> generateColumns(FormatModel format) {
   List<GridColumn> ret = [];

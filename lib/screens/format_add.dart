@@ -1,3 +1,4 @@
+import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
@@ -32,11 +33,17 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
   List<TableRow> itemRows = [];
 
   void _itemAdd() {
-    items.add({'name': '', 'type': 'text'});
+    items.add({'name': '', 'type': 'TEXT'});
     _rebuildItemRows();
   }
 
-  void _itemRemove(Map map) {
+  void _typeChange(Map<String, String> map, String value) {
+    Map<String, String> getMap = items.singleWhere((e) => e == map);
+    getMap['type'] = value;
+    _rebuildItemRows();
+  }
+
+  void _itemRemove(Map<String, String> map) {
     items.remove(map);
     _rebuildItemRows();
   }
@@ -69,45 +76,42 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
   }
 
   void _rebuildItemRows() {
-    setState(() {
-      itemRows.clear();
-      for (Map map in items) {
-        itemRows.add(TableRow(
-          children: [
-            Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(4),
-              child: CustomTextBox(
-                controller: TextEditingController(text: map['name']),
-                onChanged: (value) {
-                  map['name'] = value;
-                },
-              ),
+    itemRows.clear();
+    for (Map<String, String> map in items) {
+      itemRows.add(TableRow(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(4),
+            child: CustomTextBox(
+              controller: TextEditingController(text: '${map['name']}'),
+              onChanged: (value) {
+                map['name'] = value;
+              },
             ),
-            Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(4),
-              child: CustomItemsComboBox(
-                value: map['type'],
-                onChanged: (value) {
-                  map['type'] = value;
-                },
-              ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(4),
+            child: CustomItemsComboBox(
+              value: '${map['type']}',
+              onChanged: (value) => _typeChange(map, value ?? 'TEXT'),
             ),
-            Container(
-              alignment: Alignment.center,
-              margin: const EdgeInsets.all(4),
-              child: CustomIcon(
-                iconData: FluentIcons.clear,
-                iconColor: whiteColor,
-                backgroundColor: redColor,
-                onPressed: () => _itemRemove(map),
-              ),
+          ),
+          Container(
+            alignment: Alignment.center,
+            margin: const EdgeInsets.all(4),
+            child: CustomIcon(
+              iconData: FluentIcons.clear,
+              iconColor: whiteColor,
+              backgroundColor: redColor,
+              onPressed: () => _itemRemove(map),
             ),
-          ],
-        ));
-      }
-    });
+          ),
+        ],
+      ));
+    }
+    setState(() {});
   }
 
   @override
@@ -135,27 +139,28 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
                   onPressed: () async {
-                    if (title.text == '') return;
-                    if (items.isEmpty) return;
+                    if (title.text == '') {
+                      showMessage(context, 'タイトルを入力してください', false);
+                      return;
+                    }
+                    if (items.isEmpty) {
+                      showMessage(context, '項目を一つ以上追加してください', false);
+                      return;
+                    }
                     int newId = await formatService.insert(
                       title: title.text,
                       remarks: remarks.text,
                       type: type,
                       items: items,
                     );
-                    String tableName = '$type$newId';
                     await backupService.create(
-                      tableName: tableName,
+                      tableName: '$type$newId',
                       items: items,
                     );
                     widget.resetIndex();
                     if (!mounted) return;
-                    displayInfoBar(context, builder: (context, close) {
-                      return const InfoBar(
-                        title: Text('フォーマットを追加しました'),
-                        severity: InfoBarSeverity.success,
-                      );
-                    });
+                    showMessage(context, 'フォーマットを追加しました', true);
+                    return;
                   },
                 ),
               ],
@@ -172,7 +177,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                       label: 'タイトル',
                       child: CustomTextBox(
                         controller: title,
-                        placeholder: '例) 請求書',
+                        placeholder: '例) 受注データ、請求書',
                       ),
                     ),
                     const SizedBox(height: 16),
