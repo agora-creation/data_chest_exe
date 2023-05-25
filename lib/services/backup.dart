@@ -87,7 +87,7 @@ class BackupService {
     try {
       Database db = await _getDatabase();
       int flg = await db.delete(tableName);
-      if (flg > 0) {
+      if (flg == 1) {
         return true;
       }
       return false;

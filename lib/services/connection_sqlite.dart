@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class ConnectionSQLiteService {
@@ -21,8 +22,9 @@ class ConnectionSQLiteService {
 
   Future<Database> _openDatabase() async {
     sqfliteFfiInit();
-    String databasePath = await databaseFactoryFfi.getDatabasesPath();
-    String path = join(databasePath, DATABASE_NAME);
+    final dbDirectory = await getApplicationSupportDirectory();
+    final dbFilePath = dbDirectory.path;
+    String path = join(dbFilePath, DATABASE_NAME);
     DatabaseFactory databaseFactory = databaseFactoryFfi;
     _db ??= await databaseFactory.openDatabase(
       path,

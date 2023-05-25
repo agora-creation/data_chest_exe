@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
           items.add(PaneItem(
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.add),
-            title: const Text('フォーマットを追加する'),
+            title: const Text('入れ物を追加する'),
             body: FormatAddScreen(resetIndex: resetIndex),
           ));
           if (snapshot.hasData) {
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               header: const Padding(
                 padding: EdgeInsets.only(top: 8),
                 child: Text(
-                  'フォーマット一覧',
+                  '入れ物一覧',
                   style: TextStyle(fontSize: 12),
                 ),
               ),

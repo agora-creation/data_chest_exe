@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:data_chest_exe/common/style.dart';
-import 'package:data_chest_exe/widgets/custom_button.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path/path.dart' as p;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -17,33 +16,55 @@ class CustomCell2 extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (p.extension(filePath) == '.pdf') {
-          showDialog(
-            context: context,
-            builder: (context) => ContentDialog(
-              content: SfPdfViewer.file(file),
-              actions: [
-                CustomButton(
-                  labelText: '閉じる',
-                  labelColor: whiteColor,
-                  backgroundColor: greyColor,
-                  onPressed: () => Navigator.pop(context),
+          Navigator.push(
+            context,
+            FluentPageRoute(
+              builder: (context) => ScaffoldPage(
+                padding: EdgeInsets.zero,
+                header: Container(
+                  color: mainColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(FluentIcons.back, color: whiteColor),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
+                content: SfPdfViewer.file(file),
+              ),
+              fullscreenDialog: true,
             ),
           );
         } else {
-          showDialog(
-            context: context,
-            builder: (context) => ContentDialog(
-              content: Image.file(file),
-              actions: [
-                CustomButton(
-                  labelText: '閉じる',
-                  labelColor: whiteColor,
-                  backgroundColor: greyColor,
-                  onPressed: () => Navigator.pop(context),
+          Navigator.push(
+            context,
+            FluentPageRoute(
+              builder: (context) => ScaffoldPage(
+                padding: EdgeInsets.zero,
+                header: Container(
+                  color: mainColor,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(FluentIcons.back, color: whiteColor),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
+                content: Image.file(file),
+              ),
+              fullscreenDialog: true,
             ),
           );
         }

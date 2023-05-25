@@ -278,7 +278,7 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
               id: widget.format.id ?? 0,
             )) {
               if (!mounted) return;
-              showMessage(context, 'フォーマットの削除に失敗しました', false);
+              showMessage(context, '入れ物の削除に失敗しました', false);
               return;
             }
             if (!await widget.backupService.delete(
@@ -290,7 +290,7 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
             }
             widget.resetIndex();
             if (!mounted) return;
-            showMessage(context, 'フォーマットを削除しました', true);
+            showMessage(context, '入れ物を削除しました', true);
             Navigator.pop(context);
           },
         ),

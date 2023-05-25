@@ -1,6 +1,5 @@
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
-import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_icon.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
@@ -24,7 +23,6 @@ class FormatAddScreen extends StatefulWidget {
 }
 
 class _FormatAddScreenState extends State<FormatAddScreen> {
-  BackupService backupService = BackupService();
   FormatService formatService = FormatService();
   TextEditingController title = TextEditingController();
   TextEditingController remarks = TextEditingController();
@@ -131,7 +129,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('フォーマットを追加する', style: TextStyle(fontSize: 18)),
+                const Text('入れ物を追加する', style: TextStyle(fontSize: 18)),
                 CustomIconButton(
                   iconData: FluentIcons.check_mark,
                   iconColor: whiteColor,
@@ -139,27 +137,20 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   labelColor: whiteColor,
                   backgroundColor: blueColor,
                   onPressed: () async {
-                    if (title.text == '') {
-                      showMessage(context, 'タイトルを入力してください', false);
-                      return;
-                    }
-                    if (items.isEmpty) {
-                      showMessage(context, '項目を一つ以上追加してください', false);
-                      return;
-                    }
-                    int newId = await formatService.insert(
+                    String? error = await formatService.insert(
                       title: title.text,
                       remarks: remarks.text,
                       type: type,
                       items: items,
                     );
-                    await backupService.create(
-                      tableName: '$type$newId',
-                      items: items,
-                    );
+                    if (error != null) {
+                      if (!mounted) return;
+                      showMessage(context, error, false);
+                      return;
+                    }
                     widget.resetIndex();
                     if (!mounted) return;
-                    showMessage(context, 'フォーマットを追加しました', true);
+                    showMessage(context, '入れ物を追加しました', true);
                     return;
                   },
                 ),
