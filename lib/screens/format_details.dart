@@ -274,11 +274,12 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
           labelColor: whiteColor,
           backgroundColor: redColor,
           onPressed: () async {
-            if (!await widget.formatService.delete(
+            String? error = await widget.formatService.delete(
               id: widget.format.id ?? 0,
-            )) {
+            );
+            if (error != null) {
               if (!mounted) return;
-              showMessage(context, '入れ物の削除に失敗しました', false);
+              showMessage(context, error, false);
               return;
             }
             if (!await widget.backupService.delete(
