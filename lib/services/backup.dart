@@ -1,3 +1,4 @@
+import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/connection_sqlite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -14,7 +15,7 @@ class BackupService {
     required List<Map<String, String>> items,
   }) async {
     String? error;
-    if (items.isEmpty) error = '項目を一つ以上追加してください';
+    if (items.isEmpty) return '項目を一つ以上追加してください';
     try {
       Database db = await _getDatabase();
       String sql =
@@ -73,7 +74,24 @@ class BackupService {
         if (columnSql != '') columnSql += ',';
         columnSql += columnName;
         if (valuesSql != '') valuesSql += ',';
-        valuesSql += "'${data[itemKey - 1]}'";
+        String dataValue = '';
+        if (map['type'] == 'TEXT') {
+          dataValue = data[itemKey - 1];
+        } else if (map['type'] == 'INTEGER') {
+          if (int.tryParse(data[itemKey - 1]) != null) {
+            dataValue = data[itemKey - 1];
+          } else {
+            dataValue = '0';
+          }
+        } else if (map['type'] == 'DATETIME') {
+          if (data[itemKey - 1] != '') {
+            DateTime tmp = DateTime.parse(data[itemKey - 1]);
+            dataValue = dateText('yyyy-MM-dd', tmp);
+          } else {
+            dataValue = '0001-01-01';
+          }
+        }
+        valuesSql += "'$dataValue'";
         itemKey++;
       }
       columnSql += ',path';

@@ -5,9 +5,11 @@ import 'package:data_chest_exe/screens/backup_source.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
+import 'package:data_chest_exe/widgets/custom_date_box.dart';
 import 'package:data_chest_exe/widgets/custom_file_button.dart';
 import 'package:data_chest_exe/widgets/custom_file_caution.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_number_box.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -418,25 +420,7 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
             },
           ),
           const SizedBox(height: 8),
-          widget.format.type != 'csv'
-              ? Column(
-                  children: addData.map((e) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: InfoLabel(
-                      label: '${e['name']}',
-                      child: CustomTextBox(
-                        controller: TextEditingController(
-                          text: '${e['value']}',
-                        ),
-                        onChanged: (value) {
-                          e['value'] = value;
-                        },
-                      ),
-                    ),
-                  );
-                }).toList())
-              : Container(),
+          _generateForms(),
         ],
       ),
       actions: [
@@ -460,11 +444,70 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
             );
             widget.getBackups();
             if (!mounted) return;
-            showMessage(context, 'データを追加しました', true);
             Navigator.pop(context);
           },
         ),
       ],
     );
+  }
+
+  Widget _generateForms() {
+    List<Widget> children = [];
+    if (widget.format.type != 'csv') {
+      for (Map<String, String> map in addData) {
+        if (map['type'] == 'TEXT') {
+          children.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InfoLabel(
+              label: '${map['name']}',
+              child: CustomTextBox(
+                controller: TextEditingController(
+                  text: '${map['value']}',
+                ),
+                onChanged: (value) {
+                  map['value'] = value;
+                },
+              ),
+            ),
+          ));
+        } else if (map['type'] == 'INTEGER') {
+          children.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InfoLabel(
+              label: '${map['name']}',
+              child: CustomNumberBox(
+                value: int.parse('${map['value']}'),
+                onChanged: (value) {
+                  map['value'] = '$value';
+                },
+              ),
+            ),
+          ));
+        } else if (map['type'] == 'DATETIME') {
+          DateTime? value;
+          if (map['value'] != '') {
+            value = DateTime.parse('${map['value']}');
+          }
+          children.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InfoLabel(
+              label: '${map['name']}',
+              child: CustomDateBox(
+                value: value,
+                onTap: () async {
+                  var selected = await showDataPickerDialog(context, value);
+                  if (selected != null) {
+                    setState(() {
+                      map['value'] = dateText('yyyy-MM-dd', selected);
+                    });
+                  }
+                },
+              ),
+            ),
+          ));
+        }
+      }
+    }
+    return Column(children: children);
   }
 }

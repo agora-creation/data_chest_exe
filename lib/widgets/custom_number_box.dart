@@ -15,7 +15,7 @@ class CustomNumberBox extends StatelessWidget {
     return NumberBox<int>(
       value: value,
       onChanged: onChanged,
-      mode: SpinButtonPlacementMode.none,
+      mode: SpinButtonPlacementMode.inline,
     );
   }
 }

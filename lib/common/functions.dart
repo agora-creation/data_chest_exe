@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/widgets/custom_column_label.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -17,6 +20,14 @@ void showMessage(BuildContext context, String msg, bool success) {
           success == true ? InfoBarSeverity.success : InfoBarSeverity.error,
     );
   });
+}
+
+String dateText(String format, DateTime? date) {
+  String ret = '';
+  if (date != null) {
+    ret = DateFormat(format, 'ja').format(date);
+  }
+  return ret;
 }
 
 List<GridColumn> generateColumns(FormatModel format) {
@@ -163,4 +174,39 @@ Future insertBackup({
       break;
   }
   return;
+}
+
+Future<DateTime?> showDataPickerDialog(
+  BuildContext context,
+  DateTime? value,
+) async {
+  List<DateTime?>? results = await showCalendarDatePicker2Dialog(
+    context: context,
+    config: CalendarDatePicker2WithActionButtonsConfig(
+      calendarType: CalendarDatePicker2Type.single,
+    ),
+    dialogSize: const Size(325, 400),
+    value: [value],
+    borderRadius: BorderRadius.circular(8),
+    dialogBackgroundColor: whiteColor,
+  );
+  return results?.first;
+}
+
+Future<List<DateTime?>?> showDataRangePickerDialog(
+  BuildContext context,
+  DateTime? startValue,
+  DateTime? endValue,
+) async {
+  List<DateTime?>? results = await showCalendarDatePicker2Dialog(
+    context: context,
+    config: CalendarDatePicker2WithActionButtonsConfig(
+      calendarType: CalendarDatePicker2Type.range,
+    ),
+    dialogSize: const Size(325, 400),
+    value: [startValue, endValue],
+    borderRadius: BorderRadius.circular(8),
+    dialogBackgroundColor: whiteColor,
+  );
+  return results;
 }

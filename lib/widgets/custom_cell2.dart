@@ -1,9 +1,10 @@
 import 'dart:io';
 
 import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/screens/img_view.dart';
+import 'package:data_chest_exe/screens/pdf_view.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path/path.dart' as p;
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class CustomCell2 extends StatelessWidget {
   final String filePath;
@@ -19,25 +20,7 @@ class CustomCell2 extends StatelessWidget {
           Navigator.push(
             context,
             FluentPageRoute(
-              builder: (context) => ScaffoldPage(
-                padding: EdgeInsets.zero,
-                header: Container(
-                  color: mainColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(FluentIcons.back, color: whiteColor),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                content: SfPdfViewer.file(file),
-              ),
+              builder: (context) => PdfViewScreen(file),
               fullscreenDialog: true,
             ),
           );
@@ -45,25 +28,7 @@ class CustomCell2 extends StatelessWidget {
           Navigator.push(
             context,
             FluentPageRoute(
-              builder: (context) => ScaffoldPage(
-                padding: EdgeInsets.zero,
-                header: Container(
-                  color: mainColor,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                          icon: const Icon(FluentIcons.back, color: whiteColor),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                content: Image.file(file),
-              ),
+              builder: (context) => ImgViewScreen(file),
               fullscreenDialog: true,
             ),
           );

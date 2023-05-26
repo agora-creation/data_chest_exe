@@ -30,8 +30,8 @@ class FormatService {
     required List<Map<String, String>> items,
   }) async {
     String? error;
-    if (title == '') error = 'タイトルを入力してください';
-    if (items.isEmpty) error = '項目を一つ以上追加してください';
+    if (title == '') return 'タイトルを入力してください';
+    if (items.isEmpty) return '項目を一つ以上追加してください';
     try {
       Database db = await _getDatabase();
       int id = await db.rawInsert('''
