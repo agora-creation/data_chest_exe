@@ -210,3 +210,26 @@ Future<List<DateTime?>?> showDataRangePickerDialog(
   );
   return results;
 }
+
+String datesToString(List<DateTime?>? dateTimes) {
+  String ret = '';
+  if (dateTimes != null) {
+    if (dateTimes.length == 2) {
+      String start = dateText('yyyy-MM-dd', dateTimes.first);
+      String end = dateText('yyyy-MM-dd', dateTimes.last);
+      ret = '$start,$end';
+    }
+  }
+  return ret;
+}
+
+List<DateTime?> stringToDates(String value) {
+  List<DateTime?> ret = [null, null];
+  if (value != '') {
+    List<String> valueList = value.split(',');
+    DateTime start = DateTime.parse(valueList.first);
+    DateTime end = DateTime.parse(valueList.last);
+    ret = [start, end];
+  }
+  return ret;
+}

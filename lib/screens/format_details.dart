@@ -5,6 +5,7 @@ import 'package:data_chest_exe/screens/backup_source.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
+import 'package:data_chest_exe/widgets/custom_data_range_box.dart';
 import 'package:data_chest_exe/widgets/custom_date_box.dart';
 import 'package:data_chest_exe/widgets/custom_file_button.dart';
 import 'package:data_chest_exe/widgets/custom_file_caution.dart';
@@ -119,16 +120,59 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                             itemCount: searchData.length,
                             gridDelegate: kSearchGrid,
                             itemBuilder: (context, index) {
-                              return InfoLabel(
-                                label: '${searchData[index]['name']}',
-                                child: CustomTextBox(
-                                  controller: TextEditingController(
-                                    text: '${searchData[index]['value']}',
+                              Map<String, String> searchMap = searchData[index];
+                              if (searchMap['type'] == 'TEXT') {
+                                return InfoLabel(
+                                  label: '${searchMap['name']}',
+                                  child: CustomTextBox(
+                                    controller: TextEditingController(
+                                      text: '${searchMap['value']}',
+                                    ),
+                                    onChanged: (value) {
+                                      searchMap['value'] = value;
+                                    },
                                   ),
-                                  onChanged: (value) {
-                                    searchData[index]['value'] = value;
-                                  },
-                                ),
+                                );
+                              } else if (searchMap['type'] == 'INTEGER') {
+                                return InfoLabel(
+                                  label: '${searchMap['name']}',
+                                  child: CustomNumberBox(
+                                    value: int.parse('${searchMap['value']}'),
+                                    onChanged: (value) {
+                                      searchMap['value'] = '$value';
+                                    },
+                                  ),
+                                );
+                              } else if (searchMap['type'] == 'DATETIME') {
+                                DateTime? startValue;
+                                DateTime? endValue;
+                                List<DateTime?> values =
+                                    stringToDates('${searchMap['value']}');
+                                startValue = values.first;
+                                endValue = values.last;
+                                return InfoLabel(
+                                  label: '${searchMap['name']}',
+                                  child: CustomDateRangeBox(
+                                    startValue: startValue,
+                                    endValue: endValue,
+                                    onTap: () async {
+                                      var selected =
+                                          await showDataRangePickerDialog(
+                                        context,
+                                        startValue,
+                                        endValue,
+                                      );
+                                      setState(() {
+                                        searchMap['value'] =
+                                            datesToString(selected);
+                                      });
+                                    },
+                                  ),
+                                );
+                              }
+                              return InfoLabel(
+                                label: '${searchMap['name']}',
+                                child: Container(),
                               );
                             },
                           ),

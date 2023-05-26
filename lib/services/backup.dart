@@ -45,8 +45,22 @@ class BackupService {
       int itemKey = 1;
       for (Map<String, String> map in searchData) {
         String columnName = 'column$itemKey';
-        if (map['value'] != '') {
-          sql += " and $columnName like '%${map['value']}%'";
+        if (map['type'] == 'TEXT') {
+          if (map['value'] != '') {
+            sql += " and $columnName like '%${map['value']}%'";
+          }
+        } else if (map['type'] == 'INTEGER') {
+          if (map['value'] != '') {
+            sql += " and $columnName = '${map['value']}'";
+          }
+        } else if (map['type'] == 'DATETIME') {
+          if (map['value'] != '') {
+            List<DateTime?> values = stringToDates('${map['value']}');
+            String start = dateText('yyyy-MM-dd', values.first);
+            String end = dateText('yyyy-MM-dd', values.last);
+            sql +=
+                " and $columnName BETWEEN '$start 00:00:00' AND '$end 23:59:59'";
+          }
         }
         itemKey++;
       }
