@@ -282,11 +282,12 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
               showMessage(context, error, false);
               return;
             }
-            if (!await widget.backupService.delete(
+            error = await widget.backupService.delete(
               tableName: '${widget.format.type}${widget.format.id}',
-            )) {
+            );
+            if (error != null) {
               if (!mounted) return;
-              showMessage(context, 'データの削除に失敗しました', false);
+              showMessage(context, error, false);
               return;
             }
             widget.resetIndex();
@@ -337,11 +338,12 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
           labelColor: whiteColor,
           backgroundColor: redColor,
           onPressed: () async {
-            if (!await widget.backupService.delete(
+            String? error = await widget.backupService.delete(
               tableName: '${widget.format.type}${widget.format.id}',
-            )) {
+            );
+            if (error != null) {
               if (!mounted) return;
-              showMessage(context, 'データの削除に失敗しました', false);
+              showMessage(context, error, false);
               return;
             }
             widget.getBackups();

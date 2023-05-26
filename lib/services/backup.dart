@@ -9,10 +9,12 @@ class BackupService {
     return await connection.db;
   }
 
-  Future create({
+  Future<String?> create({
     required String tableName,
     required List<Map<String, String>> items,
   }) async {
+    String? error;
+    if (items.isEmpty) error = '項目を一つ以上追加してください';
     try {
       Database db = await _getDatabase();
       String sql =
@@ -27,8 +29,9 @@ class BackupService {
       sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
       await db.execute(sql);
     } catch (e) {
-      throw Exception();
+      error = e.toString();
     }
+    return error;
   }
 
   Future<List<Map<String, dynamic>>> select({
@@ -54,11 +57,12 @@ class BackupService {
     }
   }
 
-  Future<int> insert({
+  Future<String?> insert({
     required String tableName,
     required FormatModel format,
     required List<String> data,
   }) async {
+    String? error;
     try {
       Database db = await _getDatabase();
       String columnSql = '';
@@ -74,25 +78,23 @@ class BackupService {
       }
       columnSql += ',path';
       valuesSql += ",'${data[itemKey - 1]}'";
-      int newId = await db.rawInsert(
+      int id = await db.rawInsert(
         'insert into $tableName ( $columnSql ) values ( $valuesSql );',
       );
-      return newId;
     } catch (e) {
-      throw Exception();
+      error = e.toString();
     }
+    return error;
   }
 
-  Future<bool> delete({required String tableName}) async {
+  Future<String?> delete({required String tableName}) async {
+    String? error;
     try {
       Database db = await _getDatabase();
-      int flg = await db.delete(tableName);
-      if (flg == 1) {
-        return true;
-      }
-      return false;
+      await db.delete(tableName);
     } catch (e) {
-      throw Exception();
+      error = e.toString();
     }
+    return error;
   }
 }

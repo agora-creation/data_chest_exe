@@ -47,7 +47,7 @@ class FormatService {
           '${json.encode(items)}'
         );
       ''');
-      await backupService.create(
+      error = await backupService.create(
         tableName: '$type$id',
         items: items,
       );
