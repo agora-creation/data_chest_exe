@@ -16,7 +16,6 @@ import 'package:data_chest_exe/widgets/custom_number_box.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class FormatDetailsScreen extends StatefulWidget {
   final FormatModel format;
@@ -276,22 +275,24 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                CustomIconButton(
-                  iconData: FluentIcons.delete,
-                  iconColor: redColor,
-                  labelText: '選択したデータを削除する',
-                  labelColor: redColor,
-                  backgroundColor: whiteColor,
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => BackupDeleteDialog(
-                      backupService: backupService,
-                      format: widget.format,
-                      getBackups: _getBackups,
-                      checked: checked,
-                    ),
-                  ),
-                ),
+                checked.isNotEmpty
+                    ? CustomIconButton(
+                        iconData: FluentIcons.delete,
+                        iconColor: redColor,
+                        labelText: '選択したデータを削除する',
+                        labelColor: redColor,
+                        backgroundColor: whiteColor,
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) => BackupDeleteDialog(
+                            backupService: backupService,
+                            format: widget.format,
+                            getBackups: _getBackups,
+                            checked: checked,
+                          ),
+                        ),
+                      )
+                    : Container(),
                 CustomIconButton(
                   iconData: FluentIcons.add,
                   iconColor: whiteColor,
