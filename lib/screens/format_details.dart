@@ -10,6 +10,7 @@ import 'package:data_chest_exe/widgets/custom_date_box.dart';
 import 'package:data_chest_exe/widgets/custom_file_button.dart';
 import 'package:data_chest_exe/widgets/custom_file_caution.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_loading.dart';
 import 'package:data_chest_exe/widgets/custom_number_box.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:file_selector/file_selector.dart';
@@ -35,6 +36,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
   BackupService backupService = BackupService();
   List<Map<String, String>> searchData = [];
   List<Map<String, dynamic>> backups = [];
+  late DataGridController dataGridController;
 
   void _clearSearchData() {
     searchData.clear();
@@ -64,6 +66,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
     super.initState();
     _clearSearchData();
     _getBackups();
+    dataGridController = DataGridController();
   }
 
   @override
@@ -300,6 +303,8 @@ class FormatDeleteDialog extends StatefulWidget {
 }
 
 class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
@@ -307,42 +312,49 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
         '${widget.format.paneTitle()}を削除する',
         style: const TextStyle(fontSize: 18),
       ),
-      content: const Text('削除すると、データも全て削除されます。\nよろしいですか？'),
-      actions: [
-        CustomButton(
-          labelText: 'いいえ',
-          labelColor: whiteColor,
-          backgroundColor: greyColor,
-          onPressed: () => Navigator.pop(context),
-        ),
-        CustomButton(
-          labelText: 'はい',
-          labelColor: whiteColor,
-          backgroundColor: redColor,
-          onPressed: () async {
-            String? error = await widget.formatService.delete(
-              id: widget.format.id ?? 0,
-            );
-            if (error != null) {
-              if (!mounted) return;
-              showMessage(context, error, false);
-              return;
-            }
-            error = await widget.backupService.delete(
-              tableName: '${widget.format.type}${widget.format.id}',
-            );
-            if (error != null) {
-              if (!mounted) return;
-              showMessage(context, error, false);
-              return;
-            }
-            widget.resetIndex();
-            if (!mounted) return;
-            showMessage(context, '入れ物を削除しました', true);
-            Navigator.pop(context);
-          },
-        ),
-      ],
+      content: isLoading
+          ? const CustomLoading('削除中です。しばらくお待ちください。')
+          : const Text('削除すると、データも全て削除されます。\nよろしいですか？'),
+      actions: isLoading
+          ? null
+          : [
+              CustomButton(
+                labelText: 'いいえ',
+                labelColor: whiteColor,
+                backgroundColor: greyColor,
+                onPressed: () => Navigator.pop(context),
+              ),
+              CustomButton(
+                labelText: 'はい',
+                labelColor: whiteColor,
+                backgroundColor: redColor,
+                onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  String? error = await widget.formatService.delete(
+                    id: widget.format.id ?? 0,
+                  );
+                  if (error != null) {
+                    if (!mounted) return;
+                    showMessage(context, error, false);
+                    return;
+                  }
+                  error = await widget.backupService.delete(
+                    tableName: '${widget.format.type}${widget.format.id}',
+                  );
+                  if (error != null) {
+                    if (!mounted) return;
+                    showMessage(context, error, false);
+                    return;
+                  }
+                  widget.resetIndex();
+                  if (!mounted) return;
+                  showMessage(context, '入れ物を削除しました', true);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
     );
   }
 }
@@ -364,6 +376,8 @@ class BackupDeleteDialog extends StatefulWidget {
 }
 
 class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
@@ -371,34 +385,41 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
         'データを削除する',
         style: TextStyle(fontSize: 18),
       ),
-      content: const Text('データを全て削除します。\nよろしいですか？'),
-      actions: [
-        CustomButton(
-          labelText: 'いいえ',
-          labelColor: whiteColor,
-          backgroundColor: greyColor,
-          onPressed: () => Navigator.pop(context),
-        ),
-        CustomButton(
-          labelText: 'はい',
-          labelColor: whiteColor,
-          backgroundColor: redColor,
-          onPressed: () async {
-            String? error = await widget.backupService.delete(
-              tableName: '${widget.format.type}${widget.format.id}',
-            );
-            if (error != null) {
-              if (!mounted) return;
-              showMessage(context, error, false);
-              return;
-            }
-            widget.getBackups();
-            if (!mounted) return;
-            showMessage(context, 'データを削除しました', true);
-            Navigator.pop(context);
-          },
-        ),
-      ],
+      content: isLoading
+          ? const CustomLoading('削除中です。しばらくお待ちください。')
+          : const Text('データを全て削除します。\nよろしいですか？'),
+      actions: isLoading
+          ? null
+          : [
+              CustomButton(
+                labelText: 'いいえ',
+                labelColor: whiteColor,
+                backgroundColor: greyColor,
+                onPressed: () => Navigator.pop(context),
+              ),
+              CustomButton(
+                labelText: 'はい',
+                labelColor: whiteColor,
+                backgroundColor: redColor,
+                onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
+                  String? error = await widget.backupService.delete(
+                    tableName: '${widget.format.type}${widget.format.id}',
+                  );
+                  if (error != null) {
+                    if (!mounted) return;
+                    showMessage(context, error, false);
+                    return;
+                  }
+                  widget.getBackups();
+                  if (!mounted) return;
+                  showMessage(context, 'データを削除しました', true);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
     );
   }
 }
@@ -422,6 +443,7 @@ class BackupAddDialog extends StatefulWidget {
 class _BackupAddDialogState extends State<BackupAddDialog> {
   XFile? file;
   List<Map<String, String>> addData = [];
+  bool isLoading = false;
 
   void _init() {
     for (Map<String, String> map in widget.format.items) {
@@ -446,52 +468,60 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
         'データを追加する',
         style: TextStyle(fontSize: 18),
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomFileCaution(format: widget.format),
-          const SizedBox(height: 8),
-          CustomFileButton(
-            file: file,
-            onPressed: () async {
-              XFile? tmpFile = await getFile(widget.format);
-              if (tmpFile != null) {
-                setState(() {
-                  file = tmpFile;
-                });
-              }
-            },
-          ),
-          const SizedBox(height: 8),
-          _generateForms(),
-        ],
-      ),
-      actions: [
-        CustomButton(
-          labelText: 'いいえ',
-          labelColor: whiteColor,
-          backgroundColor: greyColor,
-          onPressed: () => Navigator.pop(context),
-        ),
-        CustomButton(
-          labelText: 'はい',
-          labelColor: whiteColor,
-          backgroundColor: blueColor,
-          onPressed: () async {
-            if (file == null) return;
-            await insertBackup(
-              backupService: widget.backupService,
-              format: widget.format,
-              file: file!,
-              addData: addData,
-            );
-            widget.getBackups();
-            if (!mounted) return;
-            Navigator.pop(context);
-          },
-        ),
-      ],
+      content: isLoading
+          ? const CustomLoading('アップロード中です。しばらくお待ちください。')
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomFileCaution(format: widget.format),
+                const SizedBox(height: 8),
+                CustomFileButton(
+                  file: file,
+                  onPressed: () async {
+                    XFile? tmpFile = await getFile(widget.format);
+                    if (tmpFile != null) {
+                      setState(() {
+                        file = tmpFile;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 8),
+                _generateForms(),
+              ],
+            ),
+      actions: isLoading
+          ? null
+          : [
+              CustomButton(
+                labelText: 'いいえ',
+                labelColor: whiteColor,
+                backgroundColor: greyColor,
+                onPressed: () => Navigator.pop(context),
+              ),
+              CustomButton(
+                labelText: 'はい',
+                labelColor: whiteColor,
+                backgroundColor: blueColor,
+                onPressed: () async {
+                  if (file == null) return;
+                  setState(() {
+                    isLoading = true;
+                  });
+                  await insertBackup(
+                    backupService: widget.backupService,
+                    format: widget.format,
+                    file: file!,
+                    addData: addData,
+                  );
+                  widget.getBackups();
+                  if (!mounted) return;
+                  showMessage(context, 'データを追加しました', true);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
     );
   }
 
