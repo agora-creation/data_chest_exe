@@ -30,6 +30,7 @@ dependencies:
   path_provider: ^2.0.15
   syncfusion_flutter_pdfviewer: ^21.2.6
   calendar_date_picker2: ^0.5.2
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +51,11 @@ msix_config:
   certificate_password: p@ssw0rd
   architecture: x64
   capabilities: ""
+flutter_launcher_icons:
+  windows:
+    generate: true
+    image_path: assets/images/logo.png
+    icon_size: 48
 
 flutter:
 

@@ -3,6 +3,7 @@ import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/widgets/custom_cell.dart';
 import 'package:data_chest_exe/widgets/custom_cell2.dart';
+import 'package:data_chest_exe/widgets/custom_check_cell.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -10,10 +11,14 @@ class BackupSource extends DataGridSource {
   final FormatModel format;
   List<Map<String, dynamic>> backups = [];
   List<DataGridRow> dataGridRows = [];
+  List<int> checked;
+  Function(int) checkOnChange;
 
   BackupSource({
     required this.format,
     required this.backups,
+    required this.checked,
+    required this.checkOnChange,
   }) {
     buildDataGridRows();
   }
@@ -36,14 +41,21 @@ class BackupSource extends DataGridSource {
       backgroundColor = whiteColor;
     }
     List<Widget> cells = [];
-    cells.add(CustomCell('${row.getCells()[0].value}'));
+    int id = int.parse('${row.getCells()[1].value}');
+    cells.add(CustomCheckCell(
+      checked: checked.contains(id),
+      onChanged: (value) {
+        checkOnChange(id);
+      },
+    ));
+    cells.add(CustomCell('$id'));
     int itemKey = 1;
     for (Map<String, String> map in format.items) {
-      cells.add(CustomCell('${row.getCells()[itemKey].value}'));
+      cells.add(CustomCell('${row.getCells()[itemKey + 1].value}'));
       itemKey++;
     }
     if (format.type != 'csv') {
-      cells.add(CustomCell2('${row.getCells()[itemKey].value}'));
+      cells.add(CustomCell2('${row.getCells()[itemKey + 1].value}'));
     }
     return DataGridRowAdapter(color: backgroundColor, cells: cells);
   }

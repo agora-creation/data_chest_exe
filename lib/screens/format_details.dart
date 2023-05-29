@@ -6,6 +6,7 @@ import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
 import 'package:data_chest_exe/widgets/custom_data_range_box.dart';
+import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_date_box.dart';
 import 'package:data_chest_exe/widgets/custom_file_button.dart';
 import 'package:data_chest_exe/widgets/custom_file_caution.dart';
@@ -36,7 +37,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
   BackupService backupService = BackupService();
   List<Map<String, String>> searchData = [];
   List<Map<String, dynamic>> backups = [];
-  late DataGridController dataGridController;
+  List<int> checked = [];
 
   void _clearSearchData() {
     searchData.clear();
@@ -61,12 +62,33 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
     }
   }
 
+  void checkOnChange(int value) {
+    setState(() {
+      if (checked.contains(value)) {
+        checked.remove(value);
+      } else {
+        checked.add(value);
+      }
+    });
+  }
+
+  void allCheck() {
+    if (checked.isNotEmpty) {
+      checked.clear();
+    } else {
+      for (Map<String, dynamic> backup in backups) {
+        int id = int.parse('${backup['id']}');
+        checked.add(id);
+      }
+    }
+    setState(() {});
+  }
+
   @override
   void initState() {
     super.initState();
     _clearSearchData();
     _getBackups();
-    dataGridController = DataGridController();
   }
 
   @override
@@ -201,9 +223,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                 labelText: '検索する',
                                 labelColor: whiteColor,
                                 backgroundColor: lightBlueColor,
-                                onPressed: () {
-                                  _getBackups();
-                                },
+                                onPressed: () => _getBackups(),
                               ),
                             ],
                           ),
@@ -222,17 +242,28 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: CustomButton(
+                        labelText: '全選択',
+                        labelColor: blackColor,
+                        backgroundColor: grey2Color,
+                        onPressed: () => allCheck(),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
                     Column(
                       children: [
                         SizedBox(
                           height: 380,
-                          child: SfDataGrid(
+                          child: CustomDataTable(
                             source: BackupSource(
                               format: widget.format,
                               backups: backups,
+                              checked: checked,
+                              checkOnChange: checkOnChange,
                             ),
                             columns: generateColumns(widget.format),
-                            columnWidthMode: ColumnWidthMode.auto,
                           ),
                         ),
                       ],
@@ -248,7 +279,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                 CustomIconButton(
                   iconData: FluentIcons.delete,
                   iconColor: redColor,
-                  labelText: 'データを削除する',
+                  labelText: '選択したデータを削除する',
                   labelColor: redColor,
                   backgroundColor: whiteColor,
                   onPressed: () => showDialog(
@@ -257,6 +288,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       backupService: backupService,
                       format: widget.format,
                       getBackups: _getBackups,
+                      checked: checked,
                     ),
                   ),
                 ),
@@ -340,7 +372,7 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
                     showMessage(context, error, false);
                     return;
                   }
-                  error = await widget.backupService.delete(
+                  error = await widget.backupService.deleteAll(
                     tableName: '${widget.format.type}${widget.format.id}',
                   );
                   if (error != null) {
@@ -363,11 +395,13 @@ class BackupDeleteDialog extends StatefulWidget {
   final BackupService backupService;
   final FormatModel format;
   final Function getBackups;
+  final List<int> checked;
 
   const BackupDeleteDialog({
     required this.backupService,
     required this.format,
     required this.getBackups,
+    required this.checked,
     Key? key,
   }) : super(key: key);
 
@@ -382,12 +416,12 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
   Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text(
-        'データを削除する',
+        '選択したデータを削除する',
         style: TextStyle(fontSize: 18),
       ),
       content: isLoading
           ? const CustomLoading('削除中です。しばらくお待ちください。')
-          : const Text('データを全て削除します。\nよろしいですか？'),
+          : const Text('選択したデータを削除します。\nよろしいですか？'),
       actions: isLoading
           ? null
           : [
@@ -405,9 +439,13 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
                   setState(() {
                     isLoading = true;
                   });
-                  String? error = await widget.backupService.delete(
-                    tableName: '${widget.format.type}${widget.format.id}',
-                  );
+                  String? error;
+                  for (int id in widget.checked) {
+                    error = await widget.backupService.delete(
+                      tableName: '${widget.format.type}${widget.format.id}',
+                      id: id,
+                    );
+                  }
                   if (error != null) {
                     if (!mounted) return;
                     showMessage(context, error, false);
@@ -415,7 +453,7 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
                   }
                   widget.getBackups();
                   if (!mounted) return;
-                  showMessage(context, 'データを削除しました', true);
+                  showMessage(context, '選択したデータを削除しました', true);
                   Navigator.pop(context);
                 },
               ),

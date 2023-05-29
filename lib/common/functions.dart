@@ -33,6 +33,10 @@ String dateText(String format, DateTime? date) {
 List<GridColumn> generateColumns(FormatModel format) {
   List<GridColumn> ret = [];
   ret.add(GridColumn(
+    columnName: '',
+    label: const CustomColumnLabel(''),
+  ));
+  ret.add(GridColumn(
     columnName: 'id',
     label: const CustomColumnLabel('ID'),
   ));
@@ -61,6 +65,7 @@ List<DataGridCell<dynamic>> generateCells(
   Map<String, dynamic> backup,
 ) {
   List<DataGridCell<dynamic>> ret = [];
+  ret.add(const DataGridCell(columnName: '', value: ''));
   ret.add(DataGridCell(columnName: 'id', value: backup['id']));
   int itemKey = 1;
   for (Map<String, String> map in format.items) {

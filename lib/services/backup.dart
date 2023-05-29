@@ -119,7 +119,23 @@ class BackupService {
     return error;
   }
 
-  Future<String?> delete({required String tableName}) async {
+  Future<String?> delete({
+    required String tableName,
+    required int id,
+  }) async {
+    String? error;
+    try {
+      Database db = await _getDatabase();
+      await db.rawDelete(
+        'delete from $tableName where id = $id;',
+      );
+    } catch (e) {
+      error = e.toString();
+    }
+    return error;
+  }
+
+  Future<String?> deleteAll({required String tableName}) async {
     String? error;
     try {
       Database db = await _getDatabase();
