@@ -26,10 +26,10 @@ class LogService {
       await db.rawInsert('''
         insert into log (
           content,
-          memo,
+          memo
         ) values (
           '$content',
-          '',
+          ''
         );
       ''');
     } catch (e) {

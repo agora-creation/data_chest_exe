@@ -4,6 +4,7 @@ import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/screens/backup_source.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
+import 'package:data_chest_exe/services/log.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
 import 'package:data_chest_exe/widgets/custom_data_range_box.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
@@ -153,10 +154,14 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                   ),
                                 );
                               } else if (searchMap['type'] == 'INTEGER') {
+                                int? value;
+                                if (searchMap['value'] != '') {
+                                  value = int.parse('${searchMap['value']}');
+                                }
                                 return InfoLabel(
                                   label: '${searchMap['name']}',
                                   child: CustomNumberBox(
-                                    value: int.parse('${searchMap['value']}'),
+                                    value: value,
                                     onChanged: (value) {
                                       searchMap['value'] = '$value';
                                     },
@@ -331,6 +336,7 @@ class FormatDeleteDialog extends StatefulWidget {
 }
 
 class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
+  LogService logService = LogService();
   bool isLoading = false;
 
   @override
@@ -370,6 +376,14 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
                   }
                   error = await widget.backupService.deleteAll(
                     tableName: '${widget.format.type}${widget.format.id}',
+                  );
+                  if (error != null) {
+                    if (!mounted) return;
+                    showMessage(context, error, false);
+                    return;
+                  }
+                  error = await logService.insert(
+                    '${widget.format.paneTitle()}のBOXを削除しました',
                   );
                   if (error != null) {
                     if (!mounted) return;

@@ -38,7 +38,7 @@ class ConnectionSQLiteService {
 
   FutureOr<void> _onCreate(Database db, int version) {
     db.transaction((reference) async {
-      reference.execute('''
+      await reference.execute('''
         CREATE TABLE `format` (
           `id` INTEGER PRIMARY KEY AUTOINCREMENT,
           `title` TEXT,
@@ -47,6 +47,8 @@ class ConnectionSQLiteService {
           `items` TEXT,
           `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
+      ''');
+      await reference.execute('''
         CREATE TABLE `log` (
           `id` INTEGER PRIMARY KEY AUTOINCREMENT,
           `content` TEXT,
