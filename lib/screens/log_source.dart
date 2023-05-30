@@ -2,6 +2,7 @@ import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/log.dart';
 import 'package:data_chest_exe/widgets/custom_cell.dart';
+import 'package:data_chest_exe/widgets/custom_form_cell.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -45,7 +46,10 @@ class LogSource extends DataGridSource {
     List<Widget> cells = [];
     cells.add(CustomCell('${row.getCells()[0].value}'));
     cells.add(CustomCell('${row.getCells()[1].value}'));
-    cells.add(CustomCell('${row.getCells()[2].value}'));
+    cells.add(CustomFormCell(
+      value: '${row.getCells()[2].value}',
+      onChanged: (value) {},
+    ));
     return DataGridRowAdapter(color: backgroundColor, cells: cells);
   }
 

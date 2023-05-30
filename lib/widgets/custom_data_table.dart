@@ -4,10 +4,12 @@ import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 class CustomDataTable extends StatelessWidget {
   final DataGridSource source;
   final List<GridColumn> columns;
+  final bool autoWidth;
 
   const CustomDataTable({
     required this.source,
     required this.columns,
+    required this.autoWidth,
     Key? key,
   }) : super(key: key);
 
@@ -16,7 +18,8 @@ class CustomDataTable extends StatelessWidget {
     return SfDataGrid(
       source: source,
       columns: columns,
-      columnWidthMode: ColumnWidthMode.auto,
+      columnWidthMode:
+          autoWidth == true ? ColumnWidthMode.auto : ColumnWidthMode.fill,
     );
   }
 }

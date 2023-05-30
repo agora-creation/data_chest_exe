@@ -112,6 +112,7 @@ class _LogScreenState extends State<LogScreen> {
                               GridColumn(
                                 columnName: 'createdAt',
                                 label: const CustomColumnLabel('日時'),
+                                width: 150,
                               ),
                               GridColumn(
                                 columnName: 'content',
@@ -120,8 +121,10 @@ class _LogScreenState extends State<LogScreen> {
                               GridColumn(
                                 columnName: 'memo',
                                 label: const CustomColumnLabel('メモ'),
+                                width: 250,
                               ),
                             ],
+                            autoWidth: false,
                           ),
                         ),
                       ],

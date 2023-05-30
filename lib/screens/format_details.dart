@@ -263,6 +263,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                               checkOnChange: checkOnChange,
                             ),
                             columns: generateColumns(widget.format),
+                            autoWidth: true,
                           ),
                         ),
                       ],
@@ -382,9 +383,8 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
                     showMessage(context, error, false);
                     return;
                   }
-                  error = await logService.insert(
-                    '${widget.format.paneTitle()}のBOXを削除しました',
-                  );
+                  String content = '${widget.format.paneTitle()}のBOXを削除しました。';
+                  error = await logService.insert(content);
                   if (error != null) {
                     if (!mounted) return;
                     showMessage(context, error, false);
@@ -420,6 +420,7 @@ class BackupDeleteDialog extends StatefulWidget {
 }
 
 class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
+  LogService logService = LogService();
   bool isLoading = false;
 
   @override
@@ -456,6 +457,16 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
                       id: id,
                     );
                   }
+                  if (error != null) {
+                    if (!mounted) return;
+                    showMessage(context, error, false);
+                    return;
+                  }
+                  String content =
+                      '${widget.format.paneTitle()}のBOX内の以下のデータを削除しました。\n';
+                  content += '[カテゴリコード][商品コード][商品名]\n';
+                  content += '[00][11][22]';
+                  error = await logService.insert(content);
                   if (error != null) {
                     if (!mounted) return;
                     showMessage(context, error, false);

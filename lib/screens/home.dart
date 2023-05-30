@@ -6,7 +6,6 @@ import 'package:data_chest_exe/screens/log.dart';
 import 'package:data_chest_exe/screens/start.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
-import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -84,10 +83,54 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return NavigationView(
-      appBar: const NavigationAppBar(
+      appBar: NavigationAppBar(
         automaticallyImplyLeading: false,
         backgroundColor: mainColor,
-        title: Text(appTitle, style: kAppBarTextStyle),
+        title: const Text(appTitle, style: kAppBarTextStyle),
+        actions: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              style: ButtonStyle(
+                backgroundColor: ButtonState.all(mainColor),
+              ),
+              icon: const Icon(
+                FluentIcons.info,
+                color: whiteColor,
+                size: 20,
+              ),
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => ContentDialog(
+                  title: const Text(
+                    'このソフトウェアについて',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  content: const Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ソフトウェア名: データ収納BOX'),
+                      Text('バージョン: 1.0.0.0'),
+                      Text('ライセンス認証コード:'),
+                      SizedBox(height: 32),
+                      Center(child: Text('Copyright © 2023 AGORA CREATION'))
+                    ],
+                  ),
+                  actions: [
+                    CustomButton(
+                      labelText: '閉じる',
+                      labelColor: whiteColor,
+                      backgroundColor: greyColor,
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       pane: NavigationPane(
         selected: selectedIndex,
