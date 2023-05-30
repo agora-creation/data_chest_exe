@@ -36,6 +36,13 @@ const SliverGridDelegate kSearchGrid =
   crossAxisSpacing: 8,
 );
 
+const SliverGridDelegate kSearchGrid2 =
+    SliverGridDelegateWithFixedCrossAxisCount(
+  childAspectRatio: 5 / 1,
+  crossAxisCount: 2,
+  crossAxisSpacing: 8,
+);
+
 const Map<String, String> kFormatTypeData = {
   'csv': 'CSV形式',
   'pdf': 'PDF形式',

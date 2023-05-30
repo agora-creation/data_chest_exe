@@ -17,6 +17,9 @@ class CustomDataTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return SfDataGrid(
       source: source,
+      onQueryRowHeight: (details) {
+        return details.getIntrinsicRowHeight(details.rowIndex);
+      },
       columns: columns,
       columnWidthMode:
           autoWidth == true ? ColumnWidthMode.auto : ColumnWidthMode.fill,

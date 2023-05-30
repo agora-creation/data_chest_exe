@@ -1,22 +1,31 @@
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/log.dart';
+import 'package:data_chest_exe/services/log.dart';
 import 'package:data_chest_exe/widgets/custom_cell.dart';
 import 'package:data_chest_exe/widgets/custom_form_cell.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
 class LogSource extends DataGridSource {
+  final LogService logService;
   List<LogModel> logs = [];
   List<DataGridRow> dataGridRows = [];
 
-  LogSource({required this.logs}) {
+  LogSource({
+    required this.logService,
+    required this.logs,
+  }) {
     buildDataGridRows();
   }
 
   void buildDataGridRows() {
     dataGridRows = logs.map<DataGridRow>((log) {
       return DataGridRow(cells: [
+        DataGridCell(
+          columnName: 'id',
+          value: '${log.id}',
+        ),
         DataGridCell(
           columnName: 'createdAt',
           value: dateText('yyyy-MM-dd HH:mm', log.createdAt),
@@ -44,11 +53,14 @@ class LogSource extends DataGridSource {
       backgroundColor = whiteColor;
     }
     List<Widget> cells = [];
-    cells.add(CustomCell('${row.getCells()[0].value}'));
     cells.add(CustomCell('${row.getCells()[1].value}'));
+    cells.add(CustomCell('${row.getCells()[2].value}'));
     cells.add(CustomFormCell(
-      value: '${row.getCells()[2].value}',
-      onChanged: (value) {},
+      value: '${row.getCells()[3].value}',
+      onChanged: (value) async {
+        int id = int.parse('${row.getCells()[0].value}');
+        await logService.update(id: id, memo: value);
+      },
     ));
     return DataGridRowAdapter(color: backgroundColor, cells: cells);
   }

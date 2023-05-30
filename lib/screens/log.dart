@@ -1,10 +1,13 @@
+import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/log.dart';
 import 'package:data_chest_exe/screens/log_source.dart';
 import 'package:data_chest_exe/services/log.dart';
 import 'package:data_chest_exe/widgets/custom_column_label.dart';
+import 'package:data_chest_exe/widgets/custom_data_range_box.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 
@@ -17,12 +20,16 @@ class LogScreen extends StatefulWidget {
 
 class _LogScreenState extends State<LogScreen> {
   LogService logService = LogService();
+  Map<String, String> searchMap = {};
   List<LogModel> logs = [];
 
-  void _clearSearchData() {}
+  void _clearSearchData() {
+    searchMap['createdAt'] = '';
+    searchMap['content'] = '';
+  }
 
   void _getLogs() async {
-    List<LogModel> tmpLogs = await logService.select();
+    List<LogModel> tmpLogs = await logService.select(searchMap: searchMap);
     if (mounted) {
       setState(() {
         logs = tmpLogs;
@@ -39,6 +46,12 @@ class _LogScreenState extends State<LogScreen> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime? startValue;
+    DateTime? endValue;
+    List<DateTime?> values = stringToDates('${searchMap['createdAt']}');
+    startValue = values.first;
+    endValue = values.last;
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -61,12 +74,47 @@ class _LogScreenState extends State<LogScreen> {
                 padding: const EdgeInsets.all(8),
                 child: Column(
                   children: [
-                    const Expander(
-                      header: Text('検索条件'),
+                    Expander(
+                      header: const Text('検索条件'),
                       content: Column(
                         children: [
-                          //検索フォーム
-                          SizedBox(height: 8),
+                          GridView(
+                            shrinkWrap: true,
+                            gridDelegate: kSearchGrid2,
+                            children: [
+                              InfoLabel(
+                                label: '日時',
+                                child: CustomDateRangeBox(
+                                  startValue: startValue,
+                                  endValue: endValue,
+                                  onTap: () async {
+                                    var selected =
+                                        await showDataRangePickerDialog(
+                                      context,
+                                      startValue,
+                                      endValue,
+                                    );
+                                    setState(() {
+                                      searchMap['createdAt'] =
+                                          datesToString(selected);
+                                    });
+                                  },
+                                ),
+                              ),
+                              InfoLabel(
+                                label: '内容',
+                                child: CustomTextBox(
+                                  controller: TextEditingController(
+                                    text: '${searchMap['content']}',
+                                  ),
+                                  onChanged: (value) {
+                                    searchMap['content'] = value;
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -76,14 +124,19 @@ class _LogScreenState extends State<LogScreen> {
                                 labelText: '検索クリア',
                                 labelColor: lightBlueColor,
                                 backgroundColor: whiteColor,
+                                onPressed: () {
+                                  _clearSearchData();
+                                  _getLogs();
+                                },
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               CustomIconButton(
                                 iconData: FluentIcons.search,
                                 iconColor: whiteColor,
                                 labelText: '検索する',
                                 labelColor: whiteColor,
                                 backgroundColor: lightBlueColor,
+                                onPressed: () => _getLogs(),
                               ),
                             ],
                           ),
@@ -107,7 +160,10 @@ class _LogScreenState extends State<LogScreen> {
                         SizedBox(
                           height: 380,
                           child: CustomDataTable(
-                            source: LogSource(logs: logs),
+                            source: LogSource(
+                              logService: logService,
+                              logs: logs,
+                            ),
                             columns: [
                               GridColumn(
                                 columnName: 'createdAt',
