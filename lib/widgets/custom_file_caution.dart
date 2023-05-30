@@ -19,7 +19,7 @@ class CustomFileCaution extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '※文字コードは「utf-8」にしてください\n※一行目が下記のようなCSVファイルを選択してください',
+              '※CSVファイルの文字コードは「utf-8」にしてください。\n※一行目が下記のようなCSVファイルを選択してください。',
               style: TextStyle(
                 color: redColor,
                 fontSize: 12,

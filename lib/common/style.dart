@@ -1,11 +1,11 @@
 import 'package:fluent_ui/fluent_ui.dart';
 
-const double windowWidth = 1920;
-const double windowHeight = 1080;
+const double windowWidth = 1440;
+const double windowHeight = 900;
 
-const String appTitle = 'データの箪笥【データンス】';
+const String appTitle = 'データ収納BOX';
 
-const mainColor = Color(0xFF795548);
+const mainColor = Color(0xFF00BCD4);
 const whiteColor = Color(0xFFFFFFFF);
 const blackColor = Color(0xFF333333);
 const greyColor = Color(0xFF9E9E9E);

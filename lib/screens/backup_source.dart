@@ -48,7 +48,6 @@ class BackupSource extends DataGridSource {
         checkOnChange(id);
       },
     ));
-    cells.add(CustomCell('$id'));
     int itemKey = 1;
     for (Map<String, String> map in format.items) {
       cells.add(CustomCell('${row.getCells()[itemKey + 1].value}'));

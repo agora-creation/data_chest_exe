@@ -19,11 +19,11 @@ import 'package:fluent_ui/fluent_ui.dart';
 
 class FormatDetailsScreen extends StatefulWidget {
   final FormatModel format;
-  final Function() resetIndex;
+  final Function() init;
 
   const FormatDetailsScreen({
     required this.format,
-    required this.resetIndex,
+    required this.init,
     Key? key,
   }) : super(key: key);
 
@@ -118,18 +118,13 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       backupService: backupService,
                       formatService: formatService,
                       format: widget.format,
-                      resetIndex: widget.resetIndex,
+                      init: widget.init,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 4),
-            Text(
-              widget.format.remarks,
-              style: const TextStyle(color: greyColor),
-            ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 16),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(8),
@@ -321,13 +316,13 @@ class FormatDeleteDialog extends StatefulWidget {
   final BackupService backupService;
   final FormatService formatService;
   final FormatModel format;
-  final Function resetIndex;
+  final Function init;
 
   const FormatDeleteDialog({
     required this.backupService,
     required this.formatService,
     required this.format,
-    required this.resetIndex,
+    required this.init,
     Key? key,
   }) : super(key: key);
 
@@ -381,9 +376,9 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
                     showMessage(context, error, false);
                     return;
                   }
-                  widget.resetIndex();
+                  widget.init();
                   if (!mounted) return;
-                  showMessage(context, '入れ物を削除しました', true);
+                  showMessage(context, 'BOXを削除しました', true);
                   Navigator.pop(context);
                 },
               ),

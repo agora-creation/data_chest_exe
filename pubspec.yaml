@@ -40,7 +40,7 @@ dev_dependencies:
   msix: ^3.13.2
 
 msix_config:
-  display_name: データンス
+  display_name: データ収納BOX
   publisher_display_name: AGORA CREATION
   identity_name: com.agoracreation.datachestexe
   msix_version: 1.0.0.0

@@ -7,14 +7,14 @@ import 'package:data_chest_exe/widgets/custom_items_combo_box.dart';
 import 'package:data_chest_exe/widgets/custom_items_table.dart';
 import 'package:data_chest_exe/widgets/custom_radio_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
-import 'package:data_chest_exe/widgets/custom_type_note.dart';
+import 'package:data_chest_exe/widgets/custom_type_caution.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class FormatAddScreen extends StatefulWidget {
-  final Function() resetIndex;
+  final Function() added;
 
   const FormatAddScreen({
-    required this.resetIndex,
+    required this.added,
     Key? key,
   }) : super(key: key);
 
@@ -50,24 +50,32 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
     items.clear();
     switch (type) {
       case 'csv':
-        items.add({'name': '会員番号', 'type': 'TEXT'});
-        items.add({'name': '姓', 'type': 'TEXT'});
-        items.add({'name': '名', 'type': 'TEXT'});
+        items.add({'name': 'カテゴリコード', 'type': 'TEXT'});
+        items.add({'name': '商品コード', 'type': 'TEXT'});
+        items.add({'name': '商品名', 'type': 'TEXT'});
+        items.add({'name': '商品カナ名', 'type': 'TEXT'});
+        items.add({'name': '入数', 'type': 'INTEGER'});
+        items.add({'name': '商品説明文', 'type': 'TEXT'});
+        items.add({'name': '状態フラグ', 'type': 'INTEGER'});
+        items.add({'name': 'JANコード', 'type': 'TEXT'});
+        break;
+      case 'pdf':
+        items.add({'name': '請求日', 'type': 'DATETIME'});
+        items.add({'name': '得意先No', 'type': 'TEXT'});
+        items.add({'name': '会社名', 'type': 'TEXT'});
+        items.add({'name': '請求先氏名', 'type': 'TEXT'});
         items.add({'name': '郵便番号', 'type': 'TEXT'});
         items.add({'name': '住所', 'type': 'TEXT'});
         items.add({'name': '電話番号', 'type': 'TEXT'});
         break;
-      case 'pdf':
-        items.add({'name': '発行日', 'type': 'DATETIME'});
-        items.add({'name': '番号', 'type': 'TEXT'});
-        items.add({'name': '送り先', 'type': 'TEXT'});
-        items.add({'name': '金額', 'type': 'TEXT'});
-        break;
       case 'img':
-        items.add({'name': '発行日', 'type': 'DATETIME'});
-        items.add({'name': '番号', 'type': 'TEXT'});
-        items.add({'name': '送り先', 'type': 'TEXT'});
-        items.add({'name': '金額', 'type': 'TEXT'});
+        items.add({'name': '請求日', 'type': 'DATETIME'});
+        items.add({'name': '得意先No', 'type': 'TEXT'});
+        items.add({'name': '会社名', 'type': 'TEXT'});
+        items.add({'name': '請求先氏名', 'type': 'TEXT'});
+        items.add({'name': '郵便番号', 'type': 'TEXT'});
+        items.add({'name': '住所', 'type': 'TEXT'});
+        items.add({'name': '電話番号', 'type': 'TEXT'});
         break;
     }
     _rebuildItemRows();
@@ -129,7 +137,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('入れ物を追加する', style: TextStyle(fontSize: 18)),
+                const Text('新しいBOXを追加する', style: TextStyle(fontSize: 18)),
                 CustomIconButton(
                   iconData: FluentIcons.check_mark,
                   iconColor: whiteColor,
@@ -148,9 +156,9 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                       showMessage(context, error, false);
                       return;
                     }
-                    widget.resetIndex();
+                    widget.added();
                     if (!mounted) return;
-                    showMessage(context, '入れ物を追加しました', true);
+                    showMessage(context, 'BOXを追加しました', true);
                     return;
                   },
                 ),
@@ -165,24 +173,24 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     InfoLabel(
-                      label: 'タイトル',
+                      label: 'BOX名',
                       child: CustomTextBox(
                         controller: title,
-                        placeholder: '例) 受注データ、請求書',
+                        placeholder: '例) 商品の発注データ',
                       ),
                     ),
+                    // const SizedBox(height: 16),
+                    // InfoLabel(
+                    //   label: '備考・メモ',
+                    //   child: CustomTextBox(
+                    //     controller: remarks,
+                    //     placeholder: '例) ファイルの収納ルールや、その他説明をここに記入できます。',
+                    //     maxLines: null,
+                    //   ),
+                    // ),
                     const SizedBox(height: 16),
                     InfoLabel(
-                      label: '備考',
-                      child: CustomTextBox(
-                        controller: remarks,
-                        placeholder: '例) ファイルの作成元のメモや、説明をここに書き記します。',
-                        maxLines: null,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    InfoLabel(
-                      label: 'フォーマットのタイプ',
+                      label: '収納するファイルの形式',
                       child: Row(
                         children: kFormatTypeList.map((e) {
                           return CustomRadioButton(
@@ -197,8 +205,8 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    CustomTypeNote(type: type),
-                    const SizedBox(height: 8),
+                    CustomTypeCaution(type: type),
+                    const SizedBox(height: 4),
                     CustomItemsTable(rows: itemRows),
                     const SizedBox(height: 8),
                     Row(

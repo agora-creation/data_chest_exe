@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/connection_sqlite.dart';
+import 'package:data_chest_exe/services/log.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class FormatService {

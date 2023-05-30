@@ -47,6 +47,12 @@ class ConnectionSQLiteService {
           `items` TEXT,
           `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
+        CREATE TABLE `log` (
+          `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+          `content` TEXT,
+          `memo` TEXT,
+          `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
       ''');
     });
   }

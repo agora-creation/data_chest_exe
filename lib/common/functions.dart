@@ -36,10 +36,6 @@ List<GridColumn> generateColumns(FormatModel format) {
     columnName: '',
     label: const CustomColumnLabel(''),
   ));
-  ret.add(GridColumn(
-    columnName: 'id',
-    label: const CustomColumnLabel('ID'),
-  ));
   int itemKey = 1;
   for (Map<String, String> map in format.items) {
     String columnName = 'column$itemKey';
