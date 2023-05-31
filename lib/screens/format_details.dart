@@ -291,20 +291,24 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                 ),
                               )
                             : Container(),
-                        CustomIconTextButton(
-                          iconData: FluentIcons.add,
-                          iconColor: whiteColor,
-                          labelText: 'データを追加する',
-                          labelColor: whiteColor,
-                          backgroundColor: blueColor,
-                          onPressed: () => showDialog(
-                            context: context,
-                            builder: (context) => BackupAddDialog(
-                              backupService: backupService,
-                              format: widget.format,
-                              getBackups: _getBackups,
+                        Row(
+                          children: [
+                            CustomIconTextButton(
+                              iconData: FluentIcons.add,
+                              iconColor: whiteColor,
+                              labelText: 'データを追加する',
+                              labelColor: whiteColor,
+                              backgroundColor: blueColor,
+                              onPressed: () => showDialog(
+                                context: context,
+                                builder: (context) => BackupAddDialog(
+                                  backupService: backupService,
+                                  format: widget.format,
+                                  getBackups: _getBackups,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
