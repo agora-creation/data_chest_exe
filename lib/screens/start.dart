@@ -16,7 +16,20 @@ class _StartScreenState extends State<StartScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('はじめに'),
+            Text(
+              'データ収納BOXについて',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text('① 新しいBOXを追加する'),
+            SizedBox(height: 4),
+            Text('② BOXに名前をつける'),
+            SizedBox(height: 4),
+            Text('③ BOXに収納するファイルの形式を選ぶ'),
+            SizedBox(height: 4),
           ],
         ),
       ),

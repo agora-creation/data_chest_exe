@@ -1,13 +1,12 @@
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/services/format.dart';
-import 'package:data_chest_exe/widgets/custom_icon.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
 import 'package:data_chest_exe/widgets/custom_items_combo_box.dart';
 import 'package:data_chest_exe/widgets/custom_items_table.dart';
 import 'package:data_chest_exe/widgets/custom_radio_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
-import 'package:data_chest_exe/widgets/custom_type_caution.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class FormatAddScreen extends StatefulWidget {
@@ -107,7 +106,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
           Container(
             alignment: Alignment.center,
             margin: const EdgeInsets.all(4),
-            child: CustomIcon(
+            child: CustomIconButton(
               iconData: FluentIcons.clear,
               iconColor: whiteColor,
               backgroundColor: redColor,
@@ -128,108 +127,127 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text('新しいBOXを追加する', style: TextStyle(fontSize: 18)),
-                CustomIconButton(
-                  iconData: FluentIcons.check_mark,
-                  iconColor: whiteColor,
-                  labelText: '下記内容で追加する',
-                  labelColor: whiteColor,
-                  backgroundColor: blueColor,
-                  onPressed: () async {
-                    String? error = await formatService.insert(
-                      title: title.text,
-                      remarks: remarks.text,
-                      type: type,
-                      items: items,
-                    );
-                    if (error != null) {
-                      if (!mounted) return;
-                      showMessage(context, error, false);
-                      return;
-                    }
-                    widget.added();
-                    if (!mounted) return;
-                    showMessage(context, 'BOXを追加しました', true);
-                    return;
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Card(
-              backgroundColor: whiteColor,
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    InfoLabel(
-                      label: 'BOX名',
-                      child: CustomTextBox(
-                        controller: title,
-                        placeholder: '例) 商品の発注データ',
-                      ),
-                    ),
-                    // const SizedBox(height: 16),
-                    // InfoLabel(
-                    //   label: '備考・メモ',
-                    //   child: CustomTextBox(
-                    //     controller: remarks,
-                    //     placeholder: '例) ファイルの収納ルールや、その他説明をここに記入できます。',
-                    //     maxLines: null,
-                    //   ),
-                    // ),
-                    const SizedBox(height: 16),
-                    InfoLabel(
-                      label: '収納するファイルの形式',
-                      child: Row(
-                        children: kFormatTypeList.map((e) {
-                          return CustomRadioButton(
-                            checked: type == e.key,
-                            labelText: e.value,
-                            onChanged: (value) {
-                              type = e.key;
-                              _rebuildItems();
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTypeCaution(type: type),
-                    const SizedBox(height: 4),
-                    CustomItemsTable(rows: itemRows),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(),
-                        CustomIconButton(
-                          iconData: FluentIcons.add,
-                          iconColor: whiteColor,
-                          labelText: '項目を追加する',
-                          labelColor: whiteColor,
-                          backgroundColor: cyanColor,
-                          onPressed: () => _itemAdd(),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
+    return ScaffoldPage(
+      padding: EdgeInsets.zero,
+      header: Container(
+        color: mainColor,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(FluentIcons.back, color: whiteColor),
+                onPressed: () => Navigator.pop(context),
+              ),
+              const Text(
+                '新しいBOXを追加する',
+                style: TextStyle(
+                  color: whiteColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ],
+              CustomIconTextButton(
+                iconData: FluentIcons.check_mark,
+                iconColor: whiteColor,
+                labelText: '以下の内容で追加',
+                labelColor: whiteColor,
+                backgroundColor: blueColor,
+                onPressed: () async {
+                  String? error = await formatService.insert(
+                    title: title.text,
+                    remarks: remarks.text,
+                    type: type,
+                    items: items,
+                  );
+                  if (error != null) {
+                    if (!mounted) return;
+                    showMessage(context, error, false);
+                    return;
+                  }
+                  widget.added();
+                  if (!mounted) return;
+                  showMessage(context, 'BOXを追加しました', true);
+                  Navigator.pop(context);
+                  return;
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+      content: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      InfoLabel(
+                        label: 'BOX名',
+                        child: CustomTextBox(
+                          controller: title,
+                          placeholder: '例) 商品の発注データ',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      InfoLabel(
+                        label: '収納するファイルの形式',
+                        child: Row(
+                          children: kFormatTypeList.map((e) {
+                            return CustomRadioButton(
+                              checked: type == e.key,
+                              labelText: e.value,
+                              onChanged: (value) {
+                                type = e.key;
+                                _rebuildItems();
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      type == 'csv'
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  '※アップロードするCSVファイルの一行目を確認し、『項目名』と『項目タイプ』を入力・選択してください。',
+                                  style: TextStyle(color: redColor),
+                                ),
+                                const SizedBox(height: 4),
+                                CustomItemsTable(rows: itemRows),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(),
+                                    CustomIconTextButton(
+                                      iconData: FluentIcons.add,
+                                      iconColor: whiteColor,
+                                      labelText: '項目を追加する',
+                                      labelColor: whiteColor,
+                                      backgroundColor: cyanColor,
+                                      onPressed: () => _itemAdd(),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

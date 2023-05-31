@@ -19,7 +19,12 @@ FluentThemeData themeData() {
   return FluentThemeData(
     fontFamily: 'SourceHanSansJP-Regular',
     activeColor: mainColor,
-    scaffoldBackgroundColor: const Color(0xFFEFEBE9),
+    cardColor: whiteColor,
+    scaffoldBackgroundColor: const Color(0xFFE0F7FA),
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    navigationPaneTheme: const NavigationPaneThemeData(
+      backgroundColor: Color(0xFFB2EBF2),
+    ),
   );
 }
 

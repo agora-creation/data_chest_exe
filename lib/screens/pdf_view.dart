@@ -23,11 +23,6 @@ class PdfViewScreen extends StatelessWidget {
                 icon: const Icon(FluentIcons.back, color: whiteColor),
                 onPressed: () => Navigator.pop(context),
               ),
-              const SizedBox(width: 4),
-              const Text(
-                '一覧に戻る',
-                style: TextStyle(color: whiteColor),
-              ),
             ],
           ),
         ),

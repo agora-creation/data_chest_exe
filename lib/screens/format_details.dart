@@ -11,7 +11,7 @@ import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_date_box.dart';
 import 'package:data_chest_exe/widgets/custom_file_button.dart';
 import 'package:data_chest_exe/widgets/custom_file_caution.dart';
-import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
 import 'package:data_chest_exe/widgets/custom_loading.dart';
 import 'package:data_chest_exe/widgets/custom_number_box.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
@@ -107,7 +107,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                   widget.format.paneTitle(),
                   style: const TextStyle(fontSize: 18),
                 ),
-                CustomIconButton(
+                CustomIconTextButton(
                   iconData: FluentIcons.delete,
                   iconColor: whiteColor,
                   labelText: '${widget.format.paneTitle()}を削除する',
@@ -204,7 +204,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CustomIconButton(
+                              CustomIconTextButton(
                                 iconData: FluentIcons.clear,
                                 iconColor: lightBlueColor,
                                 labelText: '検索クリア',
@@ -216,7 +216,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                 },
                               ),
                               const SizedBox(width: 8),
-                              CustomIconButton(
+                              CustomIconTextButton(
                                 iconData: FluentIcons.search,
                                 iconColor: whiteColor,
                                 labelText: '検索する',
@@ -268,48 +268,49 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        checked.isNotEmpty
+                            ? CustomIconTextButton(
+                                iconData: FluentIcons.delete,
+                                iconColor: whiteColor,
+                                labelText: '選択したデータを削除する',
+                                labelColor: whiteColor,
+                                backgroundColor: redColor,
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => BackupDeleteDialog(
+                                    backupService: backupService,
+                                    format: widget.format,
+                                    backups: backups,
+                                    getBackups: _getBackups,
+                                    checked: checked,
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        CustomIconTextButton(
+                          iconData: FluentIcons.add,
+                          iconColor: whiteColor,
+                          labelText: 'データを追加する',
+                          labelColor: whiteColor,
+                          backgroundColor: blueColor,
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => BackupAddDialog(
+                              backupService: backupService,
+                              format: widget.format,
+                              getBackups: _getBackups,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                checked.isNotEmpty
-                    ? CustomIconButton(
-                        iconData: FluentIcons.delete,
-                        iconColor: redColor,
-                        labelText: '選択したデータを削除する',
-                        labelColor: redColor,
-                        backgroundColor: whiteColor,
-                        onPressed: () => showDialog(
-                          context: context,
-                          builder: (context) => BackupDeleteDialog(
-                            backupService: backupService,
-                            format: widget.format,
-                            getBackups: _getBackups,
-                            checked: checked,
-                          ),
-                        ),
-                      )
-                    : Container(),
-                CustomIconButton(
-                  iconData: FluentIcons.add,
-                  iconColor: whiteColor,
-                  labelText: 'データを追加する',
-                  labelColor: whiteColor,
-                  backgroundColor: blueColor,
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => BackupAddDialog(
-                      backupService: backupService,
-                      format: widget.format,
-                      getBackups: _getBackups,
-                    ),
-                  ),
-                ),
-              ],
             ),
           ],
         ),
@@ -383,13 +384,7 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
                     showMessage(context, error, false);
                     return;
                   }
-                  String content = '${widget.format.paneTitle()}のBOXを削除しました。';
-                  error = await logService.insert(content);
-                  if (error != null) {
-                    if (!mounted) return;
-                    showMessage(context, error, false);
-                    return;
-                  }
+                  await logService.insertFormat(format: widget.format);
                   widget.init();
                   if (!mounted) return;
                   showMessage(context, 'BOXを削除しました', true);
@@ -404,12 +399,14 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
 class BackupDeleteDialog extends StatefulWidget {
   final BackupService backupService;
   final FormatModel format;
+  final List<Map<String, dynamic>> backups;
   final Function getBackups;
   final List<int> checked;
 
   const BackupDeleteDialog({
     required this.backupService,
     required this.format,
+    required this.backups,
     required this.getBackups,
     required this.checked,
     Key? key,
@@ -456,17 +453,14 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
                       tableName: '${widget.format.type}${widget.format.id}',
                       id: id,
                     );
+                    Map<String, dynamic> backup = widget.backups.singleWhere(
+                      (e) => int.parse('${e['id']}') == id,
+                    );
+                    await logService.insertBackup(
+                      format: widget.format,
+                      backup: backup,
+                    );
                   }
-                  if (error != null) {
-                    if (!mounted) return;
-                    showMessage(context, error, false);
-                    return;
-                  }
-                  String content =
-                      '${widget.format.paneTitle()}のBOX内の以下のデータを削除しました。\n';
-                  content += '[カテゴリコード][商品コード][商品名]\n';
-                  content += '[00][11][22]';
-                  error = await logService.insert(content);
                   if (error != null) {
                     if (!mounted) return;
                     showMessage(context, error, false);

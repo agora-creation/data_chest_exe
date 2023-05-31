@@ -6,7 +6,7 @@ import 'package:data_chest_exe/services/log.dart';
 import 'package:data_chest_exe/widgets/custom_column_label.dart';
 import 'package:data_chest_exe/widgets/custom_data_range_box.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
-import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
@@ -118,7 +118,7 @@ class _LogScreenState extends State<LogScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              CustomIconButton(
+                              CustomIconTextButton(
                                 iconData: FluentIcons.clear,
                                 iconColor: lightBlueColor,
                                 labelText: '検索クリア',
@@ -130,7 +130,7 @@ class _LogScreenState extends State<LogScreen> {
                                 },
                               ),
                               const SizedBox(width: 8),
-                              CustomIconButton(
+                              CustomIconTextButton(
                                 iconData: FluentIcons.search,
                                 iconColor: whiteColor,
                                 labelText: '検索する',

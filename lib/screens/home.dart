@@ -6,6 +6,8 @@ import 'package:data_chest_exe/screens/log.dart';
 import 'package:data_chest_exe/screens/start.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
+import 'package:data_chest_exe/widgets/custom_icon_button.dart';
+import 'package:data_chest_exe/widgets/custom_icon_text_button_small.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,9 +20,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   FormatService formatService = FormatService();
   List<NavigationPaneItem> formatItems = [];
-  int selectedIndex = 0;
+  int? selectedIndex;
 
-  void _added() async {
+  Future _generateFormatItems() async {
     formatItems.clear();
     List<FormatModel> formats = await formatService.select();
     if (formats.isNotEmpty) {
@@ -37,40 +39,27 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } else {
       formatItems.add(PaneItem(
-        icon: const Icon(FluentIcons.checkbox_fill),
+        icon: const Icon(FluentIcons.warning),
         title: const Text('BOXがありません'),
         body: const StartScreen(),
         enabled: false,
       ));
     }
-    selectedIndex = formats.length - 1;
+  }
+
+  void _added() async {
+    await _generateFormatItems();
+    selectedIndex = formatItems.length - 1;
     setState(() {});
   }
 
   void _init() async {
-    formatItems.clear();
-    List<FormatModel> formats = await formatService.select();
-    if (formats.isNotEmpty) {
-      for (FormatModel format in formats) {
-        formatItems.add(PaneItem(
-          selectedTileColor: ButtonState.all(whiteColor),
-          icon: Icon(format.paneIcon()),
-          title: Text(format.paneTitle()),
-          body: FormatDetailsScreen(
-            format: format,
-            init: _init,
-          ),
-        ));
-      }
+    await _generateFormatItems();
+    if (formatItems.isNotEmpty) {
+      selectedIndex = formatItems.length - 1;
     } else {
-      formatItems.add(PaneItem(
-        icon: const Icon(FluentIcons.checkbox_fill),
-        title: const Text('BOXがありません'),
-        body: const StartScreen(),
-        enabled: false,
-      ));
+      selectedIndex = null;
     }
-    selectedIndex = 0;
     setState(() {});
   }
 
@@ -91,42 +80,13 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Align(
             alignment: Alignment.centerRight,
-            child: IconButton(
-              style: ButtonStyle(
-                backgroundColor: ButtonState.all(mainColor),
-              ),
-              icon: const Icon(
-                FluentIcons.info,
-                color: whiteColor,
-                size: 20,
-              ),
+            child: CustomIconButton(
+              iconData: FluentIcons.info,
+              iconColor: whiteColor,
+              backgroundColor: mainColor,
               onPressed: () => showDialog(
                 context: context,
-                builder: (context) => ContentDialog(
-                  title: const Text(
-                    'このソフトウェアについて',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  content: const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('ソフトウェア名: データ収納BOX'),
-                      Text('バージョン: 1.0.0.0'),
-                      Text('ライセンス認証コード:'),
-                      SizedBox(height: 32),
-                      Center(child: Text('Copyright © 2023 AGORA CREATION'))
-                    ],
-                  ),
-                  actions: [
-                    CustomButton(
-                      labelText: '閉じる',
-                      labelColor: whiteColor,
-                      backgroundColor: greyColor,
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
+                builder: (context) => const InfoDialog(),
               ),
             ),
           ),
@@ -137,22 +97,36 @@ class _HomeScreenState extends State<HomeScreen> {
         onChanged: (index) {
           setState(() => selectedIndex = index);
         },
-        header: const Padding(
-          padding: EdgeInsets.only(top: 8),
-          child: Text(
-            'BOX一覧',
-            style: TextStyle(fontSize: 14),
+        header: Padding(
+          padding: const EdgeInsets.only(top: 8, right: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'BOX一覧',
+                style: TextStyle(fontSize: 14),
+              ),
+              CustomIconTextButtonSmall(
+                iconData: FluentIcons.add,
+                iconColor: whiteColor,
+                labelText: 'BOX追加',
+                labelColor: whiteColor,
+                backgroundColor: blueColor,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    FluentPageRoute(
+                      builder: (context) => FormatAddScreen(added: _added),
+                      fullscreenDialog: true,
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
         items: formatItems,
         footerItems: [
-          PaneItemSeparator(),
-          PaneItem(
-            selectedTileColor: ButtonState.all(whiteColor),
-            icon: const Icon(FluentIcons.add),
-            title: const Text('新しいBOXを追加する'),
-            body: FormatAddScreen(added: _added),
-          ),
           PaneItemSeparator(),
           PaneItem(
             selectedTileColor: ButtonState.all(whiteColor),
@@ -161,8 +135,48 @@ class _HomeScreenState extends State<HomeScreen> {
             body: const LogScreen(),
           ),
           PaneItemSeparator(),
+          PaneItem(
+            selectedTileColor: ButtonState.all(whiteColor),
+            icon: const Icon(FluentIcons.text_document),
+            title: const Text('使い方について'),
+            body: const StartScreen(),
+          ),
+          PaneItemSeparator(),
         ],
       ),
+    );
+  }
+}
+
+class InfoDialog extends StatelessWidget {
+  const InfoDialog({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        'ソフトウェア情報',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: const Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('ソフトウェア名: データ収納BOX'),
+          Text('バージョン: 1.0.0.0'),
+          Text('ライセンス認証コード:'),
+          SizedBox(height: 32),
+          Center(child: Text('Copyright © 2023 AGORA CREATION'))
+        ],
+      ),
+      actions: [
+        CustomButton(
+          labelText: '閉じる',
+          labelColor: whiteColor,
+          backgroundColor: greyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 }
