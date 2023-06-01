@@ -2,6 +2,7 @@ import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/screens/backup_source.dart';
+import 'package:data_chest_exe/screens/scanner.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/services/log.dart';
@@ -305,6 +306,21 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                   backupService: backupService,
                                   format: widget.format,
                                   getBackups: _getBackups,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            CustomIconTextButton(
+                              iconData: FluentIcons.generic_scan,
+                              iconColor: whiteColor,
+                              labelText: 'スキャナー',
+                              labelColor: whiteColor,
+                              backgroundColor: blueColor,
+                              onPressed: () => Navigator.push(
+                                context,
+                                FluentPageRoute(
+                                  builder: (context) => const ScannerScreen(),
+                                  fullscreenDialog: true,
                                 ),
                               ),
                             ),
