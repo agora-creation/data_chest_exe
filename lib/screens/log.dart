@@ -1,4 +1,3 @@
-import 'package:csv/csv.dart';
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/log.dart';
@@ -9,10 +8,8 @@ import 'package:data_chest_exe/widgets/custom_data_range_box.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
-import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:universal_html/html.dart' as html;
 
 class LogScreen extends StatefulWidget {
   const LogScreen({Key? key}) : super(key: key);
@@ -164,23 +161,18 @@ class _LogScreenState extends State<LogScreen> {
                           labelColor: whiteColor,
                           backgroundColor: greenColor,
                           onPressed: () async {
-                            final header = ['name', 'age', 'blood', 'birth'];
-                            final rows = logs.map((l) {
-                              return ['name', 'age', 'blood', 'birth'];
+                            final header = ['日時', '内容', 'メモ'];
+                            final rows = logs.map((e) {
+                              return [
+                                dateText('yyyy/MM/dd HH:mm', e.createdAt),
+                                e.content,
+                                e.memo,
+                              ];
                             }).toList();
-                            final csv = const ListToCsvConverter().convert(
-                              [header, ...rows],
-                            );
-                            var anchorElement = html.AnchorElement(
-                                href: 'data:text/plain;charset=utf-8,$csv')
-                              ..setAttribute('download', 'users.csv')
-                              ..click();
-                            print('click');
-                            String? path = await getSavePath(
-                              acceptedTypeGroups: [
-                                XTypeGroup(label: 'csv', extensions: ['csv'])
-                              ],
-                              suggestedName: "test.csv",
+                            await downloadCSV(
+                              header: header,
+                              rows: rows,
+                              fileName: 'log.csv',
                             );
                           },
                         ),

@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:csv/csv.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/backup.dart';
@@ -274,4 +276,32 @@ List<DateTime?> stringToDates(String value) {
     ret = [start, end];
   }
   return ret;
+}
+
+Future downloadCSV({
+  required List<String> header,
+  required List<List<String>> rows,
+  required String fileName,
+}) async {
+  String csv = const ListToCsvConverter().convert(
+    [header, ...rows],
+  );
+  String bom = '\uFEFF';
+  String csvText = bom + csv;
+  csvText = csvText.replaceAll('[', '');
+  csvText = csvText.replaceAll(']', '');
+  String? path = await getSavePath(
+    acceptedTypeGroups: [
+      const XTypeGroup(
+        label: 'csv',
+        extensions: ['csv'],
+      )
+    ],
+    suggestedName: fileName,
+  );
+  if (path == null) return;
+
+  final data = const Utf8Encoder().convert(csvText);
+  final file = XFile.fromData(data, mimeType: 'text/plain');
+  await file.saveTo(path);
 }
