@@ -232,25 +232,37 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '${backups.length}件表示中',
-                        style: const TextStyle(
-                          color: greyColor,
-                          fontSize: 12,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${backups.length}件表示中',
+                          style: const TextStyle(
+                            color: greyColor,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                     const SizedBox(height: 4),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: CustomButton(
-                        labelText: '全選択',
-                        labelColor: blackColor,
-                        backgroundColor: grey2Color,
-                        onPressed: () => allCheck(),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomButton(
+                          labelText: '全選択',
+                          labelColor: blackColor,
+                          backgroundColor: grey2Color,
+                          onPressed: () => allCheck(),
+                        ),
+                        CustomIconTextButton(
+                          iconData: FluentIcons.download,
+                          iconColor: whiteColor,
+                          labelText: 'ダウンロード',
+                          labelColor: whiteColor,
+                          backgroundColor: greenColor,
+                          onPressed: () {},
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Column(

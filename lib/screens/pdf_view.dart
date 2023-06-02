@@ -18,10 +18,24 @@ class PdfViewScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
                 icon: const Icon(FluentIcons.back, color: whiteColor),
                 onPressed: () => Navigator.pop(context),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(FluentIcons.print, color: whiteColor),
+                    onPressed: () {},
+                  ),
+                  const SizedBox(width: 4),
+                  IconButton(
+                    icon: const Icon(FluentIcons.download, color: whiteColor),
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ],
           ),

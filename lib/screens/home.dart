@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _init() async {
     await _generateFormatItems();
     if (formatItems.isNotEmpty) {
-      selectedIndex = formatItems.length - 1;
+      selectedIndex = 0;
     } else {
       selectedIndex = null;
     }

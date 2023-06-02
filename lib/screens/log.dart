@@ -144,15 +144,25 @@ class _LogScreenState extends State<LogScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '${logs.length}件表示中',
-                        style: const TextStyle(
-                          color: greyColor,
-                          fontSize: 12,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${logs.length}件表示中',
+                          style: const TextStyle(
+                            color: greyColor,
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
+                        CustomIconTextButton(
+                          iconData: FluentIcons.download,
+                          iconColor: whiteColor,
+                          labelText: 'ダウンロード',
+                          labelColor: whiteColor,
+                          backgroundColor: greenColor,
+                          onPressed: () {},
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Column(

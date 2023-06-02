@@ -13,7 +13,8 @@ const grey2Color = Color(0xFFE0E0E0);
 const redColor = Color(0xFFF44336);
 const blueColor = Color(0xFF2196F3);
 const lightBlueColor = Color(0xFF03A9F4);
-const cyanColor = Color(0xFF00BCD4);
+const tealColor = Color(0xFF009688);
+const greenColor = Color(0xFF4CAF50);
 
 FluentThemeData themeData() {
   return FluentThemeData(

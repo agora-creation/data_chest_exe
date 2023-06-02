@@ -150,10 +150,10 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
               ),
               CustomIconTextButton(
                 iconData: FluentIcons.check_mark,
-                iconColor: whiteColor,
-                labelText: '以下の内容で追加',
-                labelColor: whiteColor,
-                backgroundColor: blueColor,
+                iconColor: blackColor,
+                labelText: '以下の内容で追加する',
+                labelColor: blackColor,
+                backgroundColor: whiteColor,
                 onPressed: () async {
                   String? error = await formatService.insert(
                     title: title.text,
@@ -234,7 +234,7 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                                       iconColor: whiteColor,
                                       labelText: '項目を追加する',
                                       labelColor: whiteColor,
-                                      backgroundColor: cyanColor,
+                                      backgroundColor: greyColor,
                                       onPressed: () => _itemAdd(),
                                     ),
                                   ],
