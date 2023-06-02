@@ -300,7 +300,6 @@ Future downloadCSV({
     suggestedName: fileName,
   );
   if (path == null) return;
-
   final data = const Utf8Encoder().convert(csvText);
   final file = XFile.fromData(data, mimeType: 'text/plain');
   await file.saveTo(path);

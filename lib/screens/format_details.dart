@@ -260,7 +260,35 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                           labelText: 'ダウンロード',
                           labelColor: whiteColor,
                           backgroundColor: greenColor,
-                          onPressed: () {},
+                          onPressed: () async {
+                            List<String> header = [];
+                            for (Map<String, String> map
+                                in widget.format.items) {
+                              header.add('${map['name']}');
+                            }
+                            if (widget.format.type != 'csv') {
+                              header.add('ファイル');
+                            }
+                            List<List<String>> rows = backups.map((e) {
+                              List<String> ret = [];
+                              int itemKey = 1;
+                              for (Map<String, String> map
+                                  in widget.format.items) {
+                                String columnName = 'column$itemKey';
+                                ret.add('${e[columnName]}');
+                                itemKey++;
+                              }
+                              if (widget.format.type != 'csv') {
+                                ret.add('${e['path']}');
+                              }
+                              return ret;
+                            }).toList();
+                            await downloadCSV(
+                              header: header,
+                              rows: rows,
+                              fileName: 'backup.csv',
+                            );
+                          },
                         ),
                       ],
                     ),

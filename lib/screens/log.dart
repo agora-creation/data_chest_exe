@@ -161,8 +161,8 @@ class _LogScreenState extends State<LogScreen> {
                           labelColor: whiteColor,
                           backgroundColor: greenColor,
                           onPressed: () async {
-                            final header = ['日時', '内容', 'メモ'];
-                            final rows = logs.map((e) {
+                            List<String> header = ['日時', '内容', 'メモ'];
+                            List<List<String>> rows = logs.map((e) {
                               return [
                                 dateText('yyyy/MM/dd HH:mm', e.createdAt),
                                 e.content,
