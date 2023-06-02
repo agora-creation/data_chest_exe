@@ -64,6 +64,7 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 backgroundColor: blueColor,
                 onPressed: () async {
                   var list = await QuickScanner.getScanners();
+                  print(list);
                   _scanners.addAll(list);
                   _scanners.forEach(print);
                 },

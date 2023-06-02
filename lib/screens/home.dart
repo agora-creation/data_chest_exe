@@ -1,13 +1,15 @@
+import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/screens/format_add.dart';
 import 'package:data_chest_exe/screens/format_details.dart';
+import 'package:data_chest_exe/screens/howto.dart';
 import 'package:data_chest_exe/screens/log.dart';
-import 'package:data_chest_exe/screens/start.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
 import 'package:data_chest_exe/widgets/custom_icon_button.dart';
 import 'package:data_chest_exe/widgets/custom_icon_text_button_small.dart';
+import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -41,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       formatItems.add(PaneItem(
         icon: const Icon(FluentIcons.warning),
         title: const Text('BOXがありません'),
-        body: const StartScreen(),
+        body: const HowtoScreen(),
         enabled: false,
       ));
     }
@@ -61,6 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedIndex = null;
     }
     setState(() {});
+    String? code = await getPrefsString('code');
+    if (code == null) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (context) => const LicenseDialog(),
+      );
+    }
   }
 
   @override
@@ -139,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.text_document),
             title: const Text('使い方について'),
-            body: const StartScreen(),
+            body: const HowtoScreen(),
           ),
           PaneItemSeparator(),
         ],
@@ -148,8 +158,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class InfoDialog extends StatelessWidget {
+class InfoDialog extends StatefulWidget {
   const InfoDialog({Key? key}) : super(key: key);
+
+  @override
+  State<InfoDialog> createState() => _InfoDialogState();
+}
+
+class _InfoDialogState extends State<InfoDialog> {
+  String? code;
+
+  void _init() async {
+    String? tmpCode = await getPrefsString('code');
+    setState(() {
+      code = tmpCode;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,15 +188,15 @@ class InfoDialog extends StatelessWidget {
         'ソフトウェア情報',
         style: TextStyle(fontSize: 18),
       ),
-      content: const Column(
+      content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('ソフトウェア名: データ収納BOX'),
-          Text('バージョン: 1.0.0.0'),
-          Text('ライセンス認証コード:'),
-          SizedBox(height: 32),
-          Center(child: Text('Copyright © 2023 AGORA CREATION'))
+          const Text('ソフトウェア名: データ収納BOX'),
+          const Text('バージョン: 1.0.0.0'),
+          Text('ライセンスコード: $code'),
+          const SizedBox(height: 32),
+          const Center(child: Text('Copyright © 2023 AGORA CREATION'))
         ],
       ),
       actions: [
@@ -175,6 +205,55 @@ class InfoDialog extends StatelessWidget {
           labelColor: whiteColor,
           backgroundColor: greyColor,
           onPressed: () => Navigator.pop(context),
+        ),
+      ],
+    );
+  }
+}
+
+class LicenseDialog extends StatefulWidget {
+  const LicenseDialog({Key? key}) : super(key: key);
+
+  @override
+  State<LicenseDialog> createState() => _LicenseDialogState();
+}
+
+class _LicenseDialogState extends State<LicenseDialog> {
+  TextEditingController code = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        'ライセンス認証',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('このソフトウェアを利用するには、ライセンス認証が必要です。'),
+          const SizedBox(height: 16),
+          InfoLabel(
+            label: 'ライセンスコード',
+            child: CustomTextBox(
+              controller: code,
+              placeholder: '0000-0000-0000-0000',
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        CustomButton(
+          labelText: '認証する',
+          labelColor: whiteColor,
+          backgroundColor: mainColor,
+          onPressed: () async {
+            await setPrefsString('code', code.text);
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
         ),
       ],
     );

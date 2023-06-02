@@ -1,4 +1,3 @@
-import 'package:csv/csv.dart';
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/log.dart';
@@ -11,7 +10,7 @@ import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import "package:universal_html/html.dart" as html;
+import 'package:to_csv/to_csv.dart' as exportCSV;
 
 class LogScreen extends StatefulWidget {
   const LogScreen({Key? key}) : super(key: key);
@@ -163,21 +162,30 @@ class _LogScreenState extends State<LogScreen> {
                           labelColor: whiteColor,
                           backgroundColor: greenColor,
                           onPressed: () {
-                            final header = ['日時', '内容', 'メモ'];
-                            final rows = logs.map((e) {
-                              return [
-                                '',
-                                '',
-                                '',
-                              ];
-                            }).toList();
-                            final csv = const ListToCsvConverter().convert(
-                              [header, ...rows],
-                            );
-                            html.AnchorElement(
-                                href: 'data:text/plain;charset=utf-8,$csv')
-                              ..setAttribute('download', 'users.csv')
-                              ..click();
+                            List<String> header = [];
+                            header.add('No.');
+                            header.add('User Name');
+                            header.add('Mobile');
+                            header.add('ID Number');
+
+                            List<List<String>> listOfLists = [];
+                            List<String> data1 = [
+                              '1',
+                              'Bilal Saeed',
+                              '1374934',
+                              '912839812'
+                            ];
+                            List<String> data2 = [
+                              '2',
+                              'Ahmar',
+                              '21341234',
+                              '192834821'
+                            ];
+
+                            listOfLists.add(data1);
+                            listOfLists.add(data2);
+
+                            exportCSV.myCSV(header, listOfLists);
                           },
                         ),
                       ],
