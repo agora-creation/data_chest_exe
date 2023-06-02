@@ -525,6 +525,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.4"
+  quick_scanner:
+    dependency: "direct main"
+    description:
+      name: quick_scanner
+      sha256: bfae081f48f900514964ba1df2b2a05b0f4b3ec22268ebc92bfba4b09598ea62
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   recase:
     dependency: transitive
     description:
