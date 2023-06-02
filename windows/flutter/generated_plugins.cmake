@@ -3,10 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  file_saver
   file_selector_windows
   flutter_twain_scanner
-  quick_scanner
   syncfusion_pdfviewer_windows
   url_launcher_windows
   window_size

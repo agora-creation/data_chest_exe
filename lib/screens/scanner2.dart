@@ -1,8 +1,7 @@
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:quick_scanner/quick_scanner.dart';
+// import 'package:quick_scanner/quick_scanner.dart';
 
 class Scanner2Screen extends StatefulWidget {
   const Scanner2Screen({Key? key}) : super(key: key);
@@ -42,7 +41,7 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 labelColor: whiteColor,
                 backgroundColor: greyColor,
                 onPressed: () async {
-                  QuickScanner.startWatch();
+                  // QuickScanner.startWatch();
                 },
               ),
               CustomButton(
@@ -50,7 +49,7 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 labelColor: whiteColor,
                 backgroundColor: greyColor,
                 onPressed: () async {
-                  QuickScanner.stopWatch();
+                  // QuickScanner.stopWatch();
                 },
               ),
             ],
@@ -63,10 +62,10 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 labelColor: whiteColor,
                 backgroundColor: blueColor,
                 onPressed: () async {
-                  var list = await QuickScanner.getScanners();
-                  print(list);
-                  _scanners.addAll(list);
-                  _scanners.forEach(print);
+                  // var list = await QuickScanner.getScanners();
+                  // print(list);
+                  // _scanners.addAll(list);
+                  // _scanners.forEach(print);
                 },
               ),
             ],
@@ -79,10 +78,10 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 labelColor: whiteColor,
                 backgroundColor: blueColor,
                 onPressed: () async {
-                  var directory = await getApplicationDocumentsDirectory();
-                  var scannedFile = await QuickScanner.scanFile(
-                      _scanners.first, directory.path);
-                  print('scannedFile $scannedFile');
+                  // var directory = await getApplicationDocumentsDirectory();
+                  // var scannedFile = await QuickScanner.scanFile(
+                  //     _scanners.first, directory.path);
+                  // print('scannedFile $scannedFile');
                 },
               ),
             ],
