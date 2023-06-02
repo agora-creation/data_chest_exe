@@ -10,7 +10,6 @@ import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
-import 'package:to_csv/to_csv.dart' as exportCSV;
 
 class LogScreen extends StatefulWidget {
   const LogScreen({Key? key}) : super(key: key);
@@ -185,7 +184,7 @@ class _LogScreenState extends State<LogScreen> {
                             listOfLists.add(data1);
                             listOfLists.add(data2);
 
-                            exportCSV.myCSV(header, listOfLists);
+                            // exportCSV.myCSV(header, listOfLists);
                           },
                         ),
                       ],
