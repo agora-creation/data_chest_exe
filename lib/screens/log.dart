@@ -1,3 +1,4 @@
+import 'package:csv/csv.dart';
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/log.dart';
@@ -10,6 +11,7 @@ import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
 import 'package:data_chest_exe/widgets/custom_text_box.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
+import "package:universal_html/html.dart" as html;
 
 class LogScreen extends StatefulWidget {
   const LogScreen({Key? key}) : super(key: key);
@@ -160,7 +162,23 @@ class _LogScreenState extends State<LogScreen> {
                           labelText: 'ダウンロード',
                           labelColor: whiteColor,
                           backgroundColor: greenColor,
-                          onPressed: () {},
+                          onPressed: () {
+                            final header = ['日時', '内容', 'メモ'];
+                            final rows = logs.map((e) {
+                              return [
+                                '',
+                                '',
+                                '',
+                              ];
+                            }).toList();
+                            final csv = const ListToCsvConverter().convert(
+                              [header, ...rows],
+                            );
+                            html.AnchorElement(
+                                href: 'data:text/plain;charset=utf-8,$csv')
+                              ..setAttribute('download', 'users.csv')
+                              ..click();
+                          },
                         ),
                       ],
                     ),
