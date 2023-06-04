@@ -15,7 +15,7 @@ class ConnectionSQLiteService {
     return _instance!;
   }
 
-  static const DATABASE_NAME = 'data_chest20230602.db';
+  static const DATABASE_NAME = 'data_chest20230604.db';
   static const DATABASE_VERSION = 1;
   Database? _db;
 
@@ -57,39 +57,236 @@ class ConnectionSQLiteService {
           `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
       ''');
-      List<Map<String, String>> items = [];
-      items.add({'name': 'カテゴリコード', 'type': 'TEXT'});
-      items.add({'name': '商品コード', 'type': 'TEXT'});
-      items.add({'name': '商品名', 'type': 'TEXT'});
-      items.add({'name': '商品カナ名', 'type': 'TEXT'});
-      items.add({'name': '入数', 'type': 'INTEGER'});
-      items.add({'name': '商品説明文', 'type': 'TEXT'});
-      items.add({'name': '状態フラグ', 'type': 'INTEGER'});
-      items.add({'name': 'JANコード', 'type': 'TEXT'});
-      await reference.execute('''
-        insert into format (
-          title,
-          remarks,
-          type,
-          items
-        ) values (
-          '注文データ',
-          '',
-          'csv',
-          '${json.encode(items)}'
-        );
-      ''');
-      String sql =
-          'CREATE TABLE `csv1` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
-      int itemKey = 1;
-      for (Map<String, String> map in items) {
-        String columnName = 'column$itemKey';
-        sql += '`$columnName` ${map['type']},';
-        itemKey++;
-      }
-      sql += '`path` TEXT,';
-      sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
-      await reference.execute(sql);
+      _initGeneration(reference);
     });
+  }
+
+  Future _initGeneration(Transaction reference) async {
+    List<Map<String, String>> items = [];
+    items.add({'name': 'カテゴリコード', 'type': 'TEXT'});
+    items.add({'name': '商品コード', 'type': 'TEXT'});
+    items.add({'name': '商品名', 'type': 'TEXT'});
+    items.add({'name': '商品カナ名', 'type': 'TEXT'});
+    items.add({'name': '入数', 'type': 'INTEGER'});
+    items.add({'name': '商品説明文', 'type': 'TEXT'});
+    items.add({'name': '状態フラグ', 'type': 'INTEGER'});
+    items.add({'name': 'JANコード', 'type': 'TEXT'});
+    int id = await reference.rawInsert('''
+      insert into format (
+        title,
+        remarks,
+        type,
+        items
+      ) values (
+        '注文データ',
+        '',
+        'csv',
+        '${json.encode(items)}'
+      );
+    ''');
+    String sql =
+        'CREATE TABLE `csv$id` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
+    int itemKey = 1;
+    for (Map<String, String> map in items) {
+      String columnName = 'column$itemKey';
+      sql += '`$columnName` ${map['type']},';
+      itemKey++;
+    }
+    sql += '`path` TEXT,';
+    sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
+    await reference.execute(sql);
+    //----------------------------------------
+    items.clear();
+    items.add({'name': '請求日', 'type': 'DATETIME'});
+    items.add({'name': '得意先No', 'type': 'TEXT'});
+    items.add({'name': '会社名', 'type': 'TEXT'});
+    items.add({'name': '請求先氏名', 'type': 'TEXT'});
+    items.add({'name': '郵便番号', 'type': 'TEXT'});
+    items.add({'name': '住所', 'type': 'TEXT'});
+    items.add({'name': '電話番号', 'type': 'TEXT'});
+    id = await reference.rawInsert('''
+      insert into format (
+        title,
+        remarks,
+        type,
+        items
+      ) values (
+        '見積書',
+        '',
+        'pdf',
+        '${json.encode(items)}'
+      );
+    ''');
+    sql = 'CREATE TABLE `pdf$id` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
+    itemKey = 1;
+    for (Map<String, String> map in items) {
+      String columnName = 'column$itemKey';
+      sql += '`$columnName` ${map['type']},';
+      itemKey++;
+    }
+    sql += '`path` TEXT,';
+    sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
+    await reference.execute(sql);
+    //----------------------------------------
+    items.clear();
+    items.add({'name': '請求日', 'type': 'DATETIME'});
+    items.add({'name': '得意先No', 'type': 'TEXT'});
+    items.add({'name': '会社名', 'type': 'TEXT'});
+    items.add({'name': '請求先氏名', 'type': 'TEXT'});
+    items.add({'name': '郵便番号', 'type': 'TEXT'});
+    items.add({'name': '住所', 'type': 'TEXT'});
+    items.add({'name': '電話番号', 'type': 'TEXT'});
+    id = await reference.rawInsert('''
+      insert into format (
+        title,
+        remarks,
+        type,
+        items
+      ) values (
+        '発注書',
+        '',
+        'pdf',
+        '${json.encode(items)}'
+      );
+    ''');
+    sql = 'CREATE TABLE `pdf$id` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
+    itemKey = 1;
+    for (Map<String, String> map in items) {
+      String columnName = 'column$itemKey';
+      sql += '`$columnName` ${map['type']},';
+      itemKey++;
+    }
+    sql += '`path` TEXT,';
+    sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
+    await reference.execute(sql);
+    //----------------------------------------
+    items.clear();
+    items.add({'name': '請求日', 'type': 'DATETIME'});
+    items.add({'name': '得意先No', 'type': 'TEXT'});
+    items.add({'name': '会社名', 'type': 'TEXT'});
+    items.add({'name': '請求先氏名', 'type': 'TEXT'});
+    items.add({'name': '郵便番号', 'type': 'TEXT'});
+    items.add({'name': '住所', 'type': 'TEXT'});
+    items.add({'name': '電話番号', 'type': 'TEXT'});
+    id = await reference.rawInsert('''
+      insert into format (
+        title,
+        remarks,
+        type,
+        items
+      ) values (
+        '納品書',
+        '',
+        'pdf',
+        '${json.encode(items)}'
+      );
+    ''');
+    sql = 'CREATE TABLE `pdf$id` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
+    itemKey = 1;
+    for (Map<String, String> map in items) {
+      String columnName = 'column$itemKey';
+      sql += '`$columnName` ${map['type']},';
+      itemKey++;
+    }
+    sql += '`path` TEXT,';
+    sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
+    await reference.execute(sql);
+    //----------------------------------------
+    items.clear();
+    items.add({'name': '請求日', 'type': 'DATETIME'});
+    items.add({'name': '得意先No', 'type': 'TEXT'});
+    items.add({'name': '会社名', 'type': 'TEXT'});
+    items.add({'name': '請求先氏名', 'type': 'TEXT'});
+    items.add({'name': '郵便番号', 'type': 'TEXT'});
+    items.add({'name': '住所', 'type': 'TEXT'});
+    items.add({'name': '電話番号', 'type': 'TEXT'});
+    id = await reference.rawInsert('''
+      insert into format (
+        title,
+        remarks,
+        type,
+        items
+      ) values (
+        '受領書',
+        '',
+        'pdf',
+        '${json.encode(items)}'
+      );
+    ''');
+    sql = 'CREATE TABLE `pdf$id` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
+    itemKey = 1;
+    for (Map<String, String> map in items) {
+      String columnName = 'column$itemKey';
+      sql += '`$columnName` ${map['type']},';
+      itemKey++;
+    }
+    sql += '`path` TEXT,';
+    sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
+    await reference.execute(sql);
+    //----------------------------------------
+    items.clear();
+    items.add({'name': '請求日', 'type': 'DATETIME'});
+    items.add({'name': '得意先No', 'type': 'TEXT'});
+    items.add({'name': '会社名', 'type': 'TEXT'});
+    items.add({'name': '請求先氏名', 'type': 'TEXT'});
+    items.add({'name': '郵便番号', 'type': 'TEXT'});
+    items.add({'name': '住所', 'type': 'TEXT'});
+    items.add({'name': '電話番号', 'type': 'TEXT'});
+    id = await reference.rawInsert('''
+      insert into format (
+        title,
+        remarks,
+        type,
+        items
+      ) values (
+        '請求書',
+        '',
+        'pdf',
+        '${json.encode(items)}'
+      );
+    ''');
+    sql = 'CREATE TABLE `pdf$id` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
+    itemKey = 1;
+    for (Map<String, String> map in items) {
+      String columnName = 'column$itemKey';
+      sql += '`$columnName` ${map['type']},';
+      itemKey++;
+    }
+    sql += '`path` TEXT,';
+    sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
+    await reference.execute(sql);
+    //----------------------------------------
+    items.clear();
+    items.add({'name': '請求日', 'type': 'DATETIME'});
+    items.add({'name': '得意先No', 'type': 'TEXT'});
+    items.add({'name': '会社名', 'type': 'TEXT'});
+    items.add({'name': '請求先氏名', 'type': 'TEXT'});
+    items.add({'name': '郵便番号', 'type': 'TEXT'});
+    items.add({'name': '住所', 'type': 'TEXT'});
+    items.add({'name': '電話番号', 'type': 'TEXT'});
+    id = await reference.rawInsert('''
+      insert into format (
+        title,
+        remarks,
+        type,
+        items
+      ) values (
+        '領収書',
+        '',
+        'pdf',
+        '${json.encode(items)}'
+      );
+    ''');
+    sql = 'CREATE TABLE `pdf$id` ( `id` INTEGER PRIMARY KEY AUTOINCREMENT,';
+    itemKey = 1;
+    for (Map<String, String> map in items) {
+      String columnName = 'column$itemKey';
+      sql += '`$columnName` ${map['type']},';
+      itemKey++;
+    }
+    sql += '`path` TEXT,';
+    sql += '`createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP );';
+    await reference.execute(sql);
+    //----------------------------------------
   }
 }

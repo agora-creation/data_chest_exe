@@ -242,6 +242,66 @@ class _FormatAddScreenState extends State<FormatAddScreen> {
                               ],
                             )
                           : Container(),
+                      type == 'pdf'
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  '※アップロードするPDFファイルに情報を入力するための『項目名』と『項目タイプ』を入力・選択してください。',
+                                  style: TextStyle(color: redColor),
+                                ),
+                                const SizedBox(height: 4),
+                                CustomItemsTable(rows: itemRows),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(),
+                                    CustomIconTextButton(
+                                      iconData: FluentIcons.add,
+                                      iconColor: whiteColor,
+                                      labelText: '項目を追加する',
+                                      labelColor: whiteColor,
+                                      backgroundColor: greyColor,
+                                      onPressed: () => _itemAdd(),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Container(),
+                      type == 'img'
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  '※アップロードする画像ファイルに情報を入力するための『項目名』と『項目タイプ』を入力・選択してください。',
+                                  style: TextStyle(color: redColor),
+                                ),
+                                const SizedBox(height: 4),
+                                CustomItemsTable(rows: itemRows),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(),
+                                    CustomIconTextButton(
+                                      iconData: FluentIcons.add,
+                                      iconColor: whiteColor,
+                                      labelText: '項目を追加する',
+                                      labelColor: whiteColor,
+                                      backgroundColor: greyColor,
+                                      onPressed: () => _itemAdd(),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                          : Container(),
                     ],
                   ),
                 ),

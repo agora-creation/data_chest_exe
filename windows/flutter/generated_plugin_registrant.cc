@@ -8,7 +8,6 @@
 
 #include <file_selector_windows/file_selector_windows.h>
 #include <flutter_twain_scanner/flutter_twain_scanner_plugin_c_api.h>
-#include <quick_scanner/quick_scanner_plugin.h>
 #include <syncfusion_pdfviewer_windows/syncfusion_pdfviewer_windows_plugin.h>
 #include <url_launcher_windows/url_launcher_windows.h>
 #include <window_size/window_size_plugin.h>
@@ -18,8 +17,6 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FileSelectorWindows"));
   FlutterTwainScannerPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterTwainScannerPluginCApi"));
-  QuickScannerPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("QuickScannerPlugin"));
   SyncfusionPdfviewerWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("SyncfusionPdfviewerWindowsPlugin"));
   UrlLauncherWindowsRegisterWithRegistrar(
