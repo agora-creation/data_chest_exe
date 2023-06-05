@@ -1,5 +1,5 @@
 import 'package:data_chest_exe/common/style.dart';
-import 'package:data_chest_exe/screens/home.dart';
+import 'package:data_chest_exe/screens/splash.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       locale: const Locale('ja'),
       title: appTitle,
       theme: themeData(),
-      home: const HomeScreen(),
+      home: const SplashScreen(),
     );
   }
 }

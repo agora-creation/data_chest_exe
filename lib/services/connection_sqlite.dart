@@ -15,7 +15,7 @@ class ConnectionSQLiteService {
     return _instance!;
   }
 
-  static const DATABASE_NAME = 'data_chest20230604.db';
+  static const DATABASE_NAME = 'data_chest20230605.db';
   static const DATABASE_VERSION = 1;
   Database? _db;
 
