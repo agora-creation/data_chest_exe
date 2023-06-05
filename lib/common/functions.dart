@@ -281,8 +281,8 @@ List<DateTime?> stringToDates(String value) {
 Future downloadCSV({
   required List<String> header,
   required List<List<String>> rows,
-  required String fileName,
 }) async {
+  String fileName = '${dateText('yyyyMMddHHmmss', DateTime.now())}.csv';
   String csv = const ListToCsvConverter().convert(
     [header, ...rows],
   );

@@ -172,7 +172,6 @@ class _LogScreenState extends State<LogScreen> {
                             await downloadCSV(
                               header: header,
                               rows: rows,
-                              fileName: 'log.csv',
                             );
                           },
                         ),

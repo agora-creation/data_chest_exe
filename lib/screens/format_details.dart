@@ -286,7 +286,6 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                             await downloadCSV(
                               header: header,
                               rows: rows,
-                              fileName: 'backup.csv',
                             );
                           },
                         ),
