@@ -15,7 +15,7 @@ class ConnectionSQLiteService {
     return _instance!;
   }
 
-  static const DATABASE_NAME = 'data_chest20230605.db';
+  static const DATABASE_NAME = 'data_chest20230606.db';
   static const DATABASE_VERSION = 1;
   Database? _db;
 
@@ -97,13 +97,15 @@ class ConnectionSQLiteService {
     await reference.execute(sql);
     //----------------------------------------
     items.clear();
-    items.add({'name': '請求日', 'type': 'DATETIME'});
-    items.add({'name': '得意先No', 'type': 'TEXT'});
-    items.add({'name': '会社名', 'type': 'TEXT'});
-    items.add({'name': '請求先氏名', 'type': 'TEXT'});
-    items.add({'name': '郵便番号', 'type': 'TEXT'});
-    items.add({'name': '住所', 'type': 'TEXT'});
-    items.add({'name': '電話番号', 'type': 'TEXT'});
+    items.add({'name': '見積日', 'type': 'DATETIME'});
+    items.add({'name': '見積No', 'type': 'TEXT'});
+    items.add({'name': '件名', 'type': 'TEXT'});
+    items.add({'name': '納期', 'type': 'DATETIME'});
+    items.add({'name': '支払条件', 'type': 'TEXT'});
+    items.add({'name': '有効期限', 'type': 'TEXT'});
+    items.add({'name': '見積金額', 'type': 'TEXT'});
+    items.add({'name': '発行会社名', 'type': 'TEXT'});
+    items.add({'name': '発行会社住所', 'type': 'TEXT'});
     id = await reference.rawInsert('''
       insert into format (
         title,
@@ -129,13 +131,14 @@ class ConnectionSQLiteService {
     await reference.execute(sql);
     //----------------------------------------
     items.clear();
-    items.add({'name': '請求日', 'type': 'DATETIME'});
-    items.add({'name': '得意先No', 'type': 'TEXT'});
-    items.add({'name': '会社名', 'type': 'TEXT'});
-    items.add({'name': '請求先氏名', 'type': 'TEXT'});
-    items.add({'name': '郵便番号', 'type': 'TEXT'});
-    items.add({'name': '住所', 'type': 'TEXT'});
-    items.add({'name': '電話番号', 'type': 'TEXT'});
+    items.add({'name': '発注日', 'type': 'DATETIME'});
+    items.add({'name': '発注No', 'type': 'TEXT'});
+    items.add({'name': '件名', 'type': 'TEXT'});
+    items.add({'name': '納期', 'type': 'DATETIME'});
+    items.add({'name': '支払条件', 'type': 'TEXT'});
+    items.add({'name': '発注金額', 'type': 'TEXT'});
+    items.add({'name': '発行会社名', 'type': 'TEXT'});
+    items.add({'name': '発行会社住所', 'type': 'TEXT'});
     id = await reference.rawInsert('''
       insert into format (
         title,
@@ -161,13 +164,14 @@ class ConnectionSQLiteService {
     await reference.execute(sql);
     //----------------------------------------
     items.clear();
-    items.add({'name': '請求日', 'type': 'DATETIME'});
-    items.add({'name': '得意先No', 'type': 'TEXT'});
-    items.add({'name': '会社名', 'type': 'TEXT'});
-    items.add({'name': '請求先氏名', 'type': 'TEXT'});
-    items.add({'name': '郵便番号', 'type': 'TEXT'});
-    items.add({'name': '住所', 'type': 'TEXT'});
-    items.add({'name': '電話番号', 'type': 'TEXT'});
+    items.add({'name': '納品日', 'type': 'DATETIME'});
+    items.add({'name': '納品No', 'type': 'TEXT'});
+    items.add({'name': '件名', 'type': 'TEXT'});
+    items.add({'name': '納期', 'type': 'DATETIME'});
+    items.add({'name': '支払条件', 'type': 'TEXT'});
+    items.add({'name': '納品金額', 'type': 'TEXT'});
+    items.add({'name': '発行会社名', 'type': 'TEXT'});
+    items.add({'name': '発行会社住所', 'type': 'TEXT'});
     id = await reference.rawInsert('''
       insert into format (
         title,
@@ -193,13 +197,15 @@ class ConnectionSQLiteService {
     await reference.execute(sql);
     //----------------------------------------
     items.clear();
-    items.add({'name': '請求日', 'type': 'DATETIME'});
-    items.add({'name': '得意先No', 'type': 'TEXT'});
-    items.add({'name': '会社名', 'type': 'TEXT'});
-    items.add({'name': '請求先氏名', 'type': 'TEXT'});
-    items.add({'name': '郵便番号', 'type': 'TEXT'});
-    items.add({'name': '住所', 'type': 'TEXT'});
-    items.add({'name': '電話番号', 'type': 'TEXT'});
+    items.add({'name': '受領日', 'type': 'DATETIME'});
+    items.add({'name': '受領No', 'type': 'TEXT'});
+    items.add({'name': '受領会社名', 'type': 'TEXT'});
+    items.add({'name': '件名', 'type': 'TEXT'});
+    items.add({'name': '納品日', 'type': 'DATETIME'});
+    items.add({'name': '支払条件', 'type': 'TEXT'});
+    items.add({'name': '金額', 'type': 'TEXT'});
+    items.add({'name': '発行会社名', 'type': 'TEXT'});
+    items.add({'name': '発行会社住所', 'type': 'TEXT'});
     id = await reference.rawInsert('''
       insert into format (
         title,
@@ -226,12 +232,13 @@ class ConnectionSQLiteService {
     //----------------------------------------
     items.clear();
     items.add({'name': '請求日', 'type': 'DATETIME'});
-    items.add({'name': '得意先No', 'type': 'TEXT'});
-    items.add({'name': '会社名', 'type': 'TEXT'});
-    items.add({'name': '請求先氏名', 'type': 'TEXT'});
-    items.add({'name': '郵便番号', 'type': 'TEXT'});
-    items.add({'name': '住所', 'type': 'TEXT'});
-    items.add({'name': '電話番号', 'type': 'TEXT'});
+    items.add({'name': '請求No', 'type': 'TEXT'});
+    items.add({'name': '件名', 'type': 'TEXT'});
+    items.add({'name': '支払期限', 'type': 'DATETIME'});
+    items.add({'name': '振込先', 'type': 'TEXT'});
+    items.add({'name': '金額', 'type': 'TEXT'});
+    items.add({'name': '発行会社名', 'type': 'TEXT'});
+    items.add({'name': '発行会社住所', 'type': 'TEXT'});
     id = await reference.rawInsert('''
       insert into format (
         title,
@@ -257,13 +264,11 @@ class ConnectionSQLiteService {
     await reference.execute(sql);
     //----------------------------------------
     items.clear();
-    items.add({'name': '請求日', 'type': 'DATETIME'});
-    items.add({'name': '得意先No', 'type': 'TEXT'});
-    items.add({'name': '会社名', 'type': 'TEXT'});
-    items.add({'name': '請求先氏名', 'type': 'TEXT'});
-    items.add({'name': '郵便番号', 'type': 'TEXT'});
-    items.add({'name': '住所', 'type': 'TEXT'});
-    items.add({'name': '電話番号', 'type': 'TEXT'});
+    items.add({'name': '発行日', 'type': 'DATETIME'});
+    items.add({'name': '領収No', 'type': 'TEXT'});
+    items.add({'name': '宛名', 'type': 'TEXT'});
+    items.add({'name': '金額', 'type': 'TEXT'});
+    items.add({'name': '但', 'type': 'TEXT'});
     id = await reference.rawInsert('''
       insert into format (
         title,

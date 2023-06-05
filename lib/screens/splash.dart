@@ -14,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _init() async {
     await formatService.select();
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     await Navigator.pushReplacement(
       context,

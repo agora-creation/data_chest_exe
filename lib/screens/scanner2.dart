@@ -12,7 +12,8 @@ class Scanner2Screen extends StatefulWidget {
 }
 
 class _Scanner2ScreenState extends State<Scanner2Screen> {
-  List<String> _scanners = [];
+  List<String> scanners = [];
+  String deviceId = '';
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,11 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 labelColor: whiteColor,
                 backgroundColor: greyColor,
                 onPressed: () async {
-                  QuickScanner.startWatch();
+                  await QuickScanner.startWatch();
+                  setState(() {
+                    scanners.clear();
+                    deviceId = '';
+                  });
                 },
               ),
               CustomButton(
@@ -50,7 +55,11 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 labelColor: whiteColor,
                 backgroundColor: greyColor,
                 onPressed: () async {
-                  QuickScanner.stopWatch();
+                  await QuickScanner.stopWatch();
+                  setState(() {
+                    scanners.clear();
+                    deviceId = '';
+                  });
                 },
               ),
             ],
@@ -65,21 +74,25 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 onPressed: () async {
                   var list = await QuickScanner.getScanners();
                   setState(() {
-                    _scanners.addAll(list);
+                    scanners.addAll(list);
                   });
                 },
               ),
             ],
           ),
           ComboBox<String>(
-            value: null,
-            items: _scanners.map((e) {
+            value: deviceId,
+            items: scanners.map((scanner) {
               return ComboBoxItem(
-                value: e,
-                child: Text(e),
+                value: scanner,
+                child: Text(scanner),
               );
             }).toList(),
-            onChanged: (value) {},
+            onChanged: (value) {
+              setState(() {
+                deviceId = value ?? '';
+              });
+            },
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -90,10 +103,10 @@ class _Scanner2ScreenState extends State<Scanner2Screen> {
                 backgroundColor: blueColor,
                 onPressed: () async {
                   var directory = await getApplicationDocumentsDirectory();
-                  print(directory);
-                  if (_scanners.isNotEmpty) {
+                  if (deviceId != '') {
+                    print(deviceId);
                     var scannedFile = await QuickScanner.scanFile(
-                      _scanners.first,
+                      deviceId,
                       directory.path,
                     );
                     print('scannedFile $scannedFile');
