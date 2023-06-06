@@ -7,8 +7,10 @@ import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/services/backup.dart';
 import 'package:data_chest_exe/widgets/custom_column_label.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -303,4 +305,24 @@ Future downloadCSV({
   final data = const Utf8Encoder().convert(csvText);
   final file = XFile.fromData(data, mimeType: 'text/plain');
   await file.saveTo(path);
+}
+
+Future<bool> licenseCheck(String code) async {
+  DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  BaseDeviceInfo deviceInfo = await deviceInfoPlugin.deviceInfo;
+  Map<String, dynamic> deviceInfoData = deviceInfo.toMap();
+  http.Response resp = await http.post(
+    Uri.parse('https://www.agora-c.com/data_chest/check.php'),
+    body: {
+      'mode': 'check',
+      'code': code,
+      'install_pc': deviceInfoData['computerName'],
+      'install_ip': '',
+    },
+  );
+  if (int.parse(resp.body) == 1) {
+    return true;
+  } else {
+    return false;
+  }
 }

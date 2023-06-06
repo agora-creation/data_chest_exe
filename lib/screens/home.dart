@@ -250,9 +250,11 @@ class _LicenseDialogState extends State<LicenseDialog> {
           labelColor: whiteColor,
           backgroundColor: mainColor,
           onPressed: () async {
-            await setPrefsString('code', code.text);
-            if (!mounted) return;
-            Navigator.pop(context);
+            if (await licenseCheck(code.text)) {
+              await setPrefsString('code', code.text);
+              if (!mounted) return;
+              Navigator.pop(context);
+            }
           },
         ),
       ],
