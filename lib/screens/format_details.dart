@@ -596,29 +596,31 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
         'データを追加する',
         style: TextStyle(fontSize: 18),
       ),
-      content: isLoading
-          ? const CustomLoading('アップロード中です。しばらくお待ちください。')
-          : Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomFileCaution(format: widget.format),
-                const SizedBox(height: 8),
-                CustomFileButton(
-                  file: file,
-                  onPressed: () async {
-                    XFile? tmpFile = await getFile(widget.format);
-                    if (tmpFile != null) {
-                      setState(() {
-                        file = tmpFile;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-                _generateForms(),
-              ],
-            ),
+      content: SingleChildScrollView(
+        child: isLoading
+            ? const CustomLoading('アップロード中です。しばらくお待ちください。')
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomFileCaution(format: widget.format),
+                  const SizedBox(height: 8),
+                  CustomFileButton(
+                    file: file,
+                    onPressed: () async {
+                      XFile? tmpFile = await getFile(widget.format);
+                      if (tmpFile != null) {
+                        setState(() {
+                          file = tmpFile;
+                        });
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  _generateForms(),
+                ],
+              ),
+      ),
       actions: isLoading
           ? null
           : [
