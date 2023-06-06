@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:data_chest_exe/common/style.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:path/path.dart' as p;
 
 class ImgViewScreen extends StatelessWidget {
   final File file;
@@ -27,7 +29,24 @@ class ImgViewScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(FluentIcons.download, color: whiteColor),
-                    onPressed: () {},
+                    onPressed: () async {
+                      final data = await file.readAsBytes();
+                      String? path = await getSavePath(
+                        acceptedTypeGroups: [
+                          const XTypeGroup(
+                            label: 'img',
+                            extensions: ['jpg', 'png'],
+                          )
+                        ],
+                        suggestedName: p.basename(file.path),
+                      );
+                      if (path == null) return;
+                      final xFile = XFile.fromData(
+                        data,
+                        mimeType: 'image/*',
+                      );
+                      await xFile.saveTo(path);
+                    },
                   ),
                 ],
               ),

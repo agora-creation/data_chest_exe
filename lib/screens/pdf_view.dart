@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:path/path.dart' as p;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PdfViewScreen extends StatelessWidget {
@@ -31,11 +32,21 @@ class PdfViewScreen extends StatelessWidget {
                     icon: const Icon(FluentIcons.download, color: whiteColor),
                     onPressed: () async {
                       final data = await file.readAsBytes();
+                      String? path = await getSavePath(
+                        acceptedTypeGroups: [
+                          const XTypeGroup(
+                            label: 'pdf',
+                            extensions: ['pdf'],
+                          )
+                        ],
+                        suggestedName: p.basename(file.path),
+                      );
+                      if (path == null) return;
                       final xFile = XFile.fromData(
                         data,
                         mimeType: 'application/pdf',
                       );
-                      await xFile.saveTo(file.path);
+                      await xFile.saveTo(path);
                     },
                   ),
                 ],
