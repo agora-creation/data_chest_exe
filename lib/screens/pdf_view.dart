@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:data_chest_exe/common/style.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
@@ -28,7 +29,14 @@ class PdfViewScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(FluentIcons.download, color: whiteColor),
-                    onPressed: () {},
+                    onPressed: () async {
+                      final data = await file.readAsBytes();
+                      final xFile = XFile.fromData(
+                        data,
+                        mimeType: 'application/pdf',
+                      );
+                      await xFile.saveTo(file.path);
+                    },
                   ),
                 ],
               ),

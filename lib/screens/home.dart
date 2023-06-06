@@ -220,6 +220,7 @@ class LicenseDialog extends StatefulWidget {
 
 class _LicenseDialogState extends State<LicenseDialog> {
   TextEditingController code = TextEditingController();
+  String? msg;
 
   @override
   Widget build(BuildContext context) {
@@ -233,6 +234,12 @@ class _LicenseDialogState extends State<LicenseDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text('このソフトウェアを利用するには、ライセンス認証が必要です。'),
+          msg != null
+              ? Text(
+                  '$msg',
+                  style: const TextStyle(color: redColor),
+                )
+              : Container(),
           const SizedBox(height: 16),
           InfoLabel(
             label: 'ライセンスコード',
@@ -254,6 +261,10 @@ class _LicenseDialogState extends State<LicenseDialog> {
               await setPrefsString('code', code.text);
               if (!mounted) return;
               Navigator.pop(context);
+            } else {
+              setState(() {
+                msg = 'ライセンス認証に失敗しました';
+              });
             }
           },
         ),
