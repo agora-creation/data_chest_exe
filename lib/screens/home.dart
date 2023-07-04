@@ -141,6 +141,13 @@ class _HomeScreenState extends State<HomeScreen> {
           PaneItem(
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.check_list_text),
+            title: const Text('取引先名称一覧'),
+            body: Container(),
+          ),
+          PaneItemSeparator(),
+          PaneItem(
+            selectedTileColor: ButtonState.all(whiteColor),
+            icon: const Icon(FluentIcons.check_list_text),
             title: const Text('削除ログ一覧'),
             body: const LogScreen(),
           ),
