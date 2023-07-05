@@ -15,7 +15,7 @@ class ConnectionSQLiteService {
     return _instance!;
   }
 
-  static const DATABASE_NAME = 'data_chest20230606.db';
+  static const DATABASE_NAME = 'data_chest20230705.db';
   static const DATABASE_VERSION = 1;
   Database? _db;
 
@@ -46,6 +46,14 @@ class ConnectionSQLiteService {
           `remarks` TEXT,
           `type` TEXT,
           `items` TEXT,
+          `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      ''');
+      await reference.execute('''
+        CREATE TABLE `client` (
+          `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+          `code` TEXT,
+          `name` TEXT,
           `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         );
       ''');

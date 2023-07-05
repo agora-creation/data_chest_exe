@@ -63,7 +63,7 @@ class _LogScreenState extends State<LogScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  '削除ログ一覧',
+                  '削除ログ',
                   style: TextStyle(fontSize: 18),
                 ),
               ],

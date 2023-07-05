@@ -1,6 +1,7 @@
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/format.dart';
+import 'package:data_chest_exe/screens/client.dart';
 import 'package:data_chest_exe/screens/format_add.dart';
 import 'package:data_chest_exe/screens/format_details.dart';
 import 'package:data_chest_exe/screens/howto.dart';
@@ -141,14 +142,14 @@ class _HomeScreenState extends State<HomeScreen> {
           PaneItem(
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.check_list_text),
-            title: const Text('取引先名称一覧'),
-            body: Container(),
+            title: const Text('取引先設定'),
+            body: const ClientScreen(),
           ),
           PaneItemSeparator(),
           PaneItem(
             selectedTileColor: ButtonState.all(whiteColor),
             icon: const Icon(FluentIcons.check_list_text),
-            title: const Text('削除ログ一覧'),
+            title: const Text('削除ログ'),
             body: const LogScreen(),
           ),
           PaneItemSeparator(),
