@@ -23,7 +23,11 @@ class BackupService {
       int itemKey = 1;
       for (Map<String, String> map in items) {
         String columnName = 'column$itemKey';
-        sql += '`$columnName` ${map['type']},';
+        if (map['type'] == 'CLIENT') {
+          sql += '`$columnName` TEXT,';
+        } else {
+          sql += '`$columnName` ${map['type']},';
+        }
         itemKey++;
       }
       sql += '`path` TEXT,';
@@ -60,6 +64,10 @@ class BackupService {
             String end = dateText('yyyy-MM-dd', values.last);
             sql +=
                 " and $columnName BETWEEN '$start 00:00:00' AND '$end 23:59:59'";
+          }
+        } else if (map['type'] == 'CLIENT') {
+          if (map['value'] != '') {
+            sql += " and $columnName = '${map['value']}'";
           }
         }
         itemKey++;
@@ -104,6 +112,8 @@ class BackupService {
           } else {
             dataValue = '0001-01-01';
           }
+        } else if (map['type'] == 'CLIENT') {
+          dataValue = data[itemKey - 1];
         }
         valuesSql += "'$dataValue'";
         itemKey++;

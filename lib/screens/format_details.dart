@@ -1,11 +1,14 @@
 import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
+import 'package:data_chest_exe/models/client.dart';
 import 'package:data_chest_exe/models/format.dart';
 import 'package:data_chest_exe/screens/backup_source.dart';
 import 'package:data_chest_exe/services/backup.dart';
+import 'package:data_chest_exe/services/client.dart';
 import 'package:data_chest_exe/services/format.dart';
 import 'package:data_chest_exe/services/log.dart';
 import 'package:data_chest_exe/widgets/custom_button.dart';
+import 'package:data_chest_exe/widgets/custom_combo_box.dart';
 import 'package:data_chest_exe/widgets/custom_data_range_box.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_date_box.dart';
@@ -33,11 +36,13 @@ class FormatDetailsScreen extends StatefulWidget {
 }
 
 class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
+  ClientService clientService = ClientService();
   FormatService formatService = FormatService();
   BackupService backupService = BackupService();
   List<Map<String, String>> searchData = [];
   List<Map<String, dynamic>> backups = [];
   List<int> checked = [];
+  List<ClientModel> clients = [];
 
   void _clearSearchData() {
     searchData.clear();
@@ -46,6 +51,18 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
         'name': '${map['name']}',
         'type': '${map['type']}',
         'value': '',
+      });
+    }
+  }
+
+  void _getClients() async {
+    List<ClientModel> tmpClients = await clientService.select(searchMap: {
+      'code': '',
+      'name': '',
+    });
+    if (mounted) {
+      setState(() {
+        clients = tmpClients;
       });
     }
   }
@@ -87,6 +104,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    _getClients();
     _clearSearchData();
     _getBackups();
   }
@@ -189,6 +207,26 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                       setState(() {
                                         searchMap['value'] =
                                             datesToString(selected);
+                                      });
+                                    },
+                                  ),
+                                );
+                              } else if (searchMap['type'] == 'CLIENT') {
+                                return InfoLabel(
+                                  label: '${searchMap['name']}',
+                                  child: CustomComboBox(
+                                    value: searchMap['value'] != ''
+                                        ? searchMap['value']
+                                        : null,
+                                    items: clients.map((e) {
+                                      return ComboBoxItem(
+                                        value: e.name,
+                                        child: Text(e.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        searchMap['value'] = value ?? '';
                                       });
                                     },
                                   ),
@@ -343,6 +381,7 @@ class _FormatDetailsScreenState extends State<FormatDetailsScreen> {
                                 builder: (context) => BackupAddDialog(
                                   backupService: backupService,
                                   format: widget.format,
+                                  clients: clients,
                                   getBackups: _getBackups,
                                 ),
                               ),
@@ -523,11 +562,13 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
 class BackupAddDialog extends StatefulWidget {
   final BackupService backupService;
   final FormatModel format;
+  final List<ClientModel> clients;
   final Function getBackups;
 
   const BackupAddDialog({
     required this.backupService,
     required this.format,
+    required this.clients,
     required this.getBackups,
     Key? key,
   }) : super(key: key);
@@ -673,6 +714,27 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
                       map['value'] = dateText('yyyy-MM-dd', selected);
                     });
                   }
+                },
+              ),
+            ),
+          ));
+        } else if (map['type'] == 'CLIENT') {
+          children.add(Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: InfoLabel(
+              label: '${map['name']}',
+              child: CustomComboBox(
+                value: map['value'] != '' ? map['value'] : null,
+                items: widget.clients.map((e) {
+                  return ComboBoxItem(
+                    value: e.name,
+                    child: Text(e.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    map['value'] = value ?? '';
+                  });
                 },
               ),
             ),

@@ -62,7 +62,7 @@ const Map<String, String> kItemTypeData = {
   'TEXT': '文字列',
   'INTEGER': '数値',
   'DATETIME': '日時',
-  'CLIENT': '取引先',
+  'CLIENT': '取引先選択',
 };
 
 final kItemTypeList =
