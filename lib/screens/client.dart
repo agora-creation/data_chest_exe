@@ -1,7 +1,9 @@
+import 'package:data_chest_exe/common/functions.dart';
 import 'package:data_chest_exe/common/style.dart';
 import 'package:data_chest_exe/models/client.dart';
 import 'package:data_chest_exe/screens/client_source.dart';
 import 'package:data_chest_exe/services/client.dart';
+import 'package:data_chest_exe/widgets/custom_button.dart';
 import 'package:data_chest_exe/widgets/custom_column_label.dart';
 import 'package:data_chest_exe/widgets/custom_data_table.dart';
 import 'package:data_chest_exe/widgets/custom_icon_text_button.dart';
@@ -23,6 +25,7 @@ class _ClientScreenState extends State<ClientScreen> {
 
   void _clearSearchData() {
     searchMap['code'] = '';
+    searchMap['name'] = '';
   }
 
   void _getClients() async {
@@ -144,7 +147,19 @@ class _ClientScreenState extends State<ClientScreen> {
                           labelText: 'ダウンロード',
                           labelColor: whiteColor,
                           backgroundColor: greenColor,
-                          onPressed: () {},
+                          onPressed: () async {
+                            List<String> header = ['取引先コード', '取引先名'];
+                            List<List<String>> rows = clients.map((e) {
+                              return [
+                                e.code,
+                                e.name,
+                              ];
+                            }).toList();
+                            await downloadCSV(
+                              header: header,
+                              rows: rows,
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -155,8 +170,10 @@ class _ClientScreenState extends State<ClientScreen> {
                           height: 380,
                           child: CustomDataTable(
                             source: ClientSource(
+                              context: context,
                               clientService: clientService,
                               clients: clients,
+                              getClients: _getClients,
                             ),
                             columns: [
                               GridColumn(
@@ -166,6 +183,11 @@ class _ClientScreenState extends State<ClientScreen> {
                               GridColumn(
                                 columnName: 'name',
                                 label: const CustomColumnLabel('取引先名'),
+                              ),
+                              GridColumn(
+                                columnName: 'edit',
+                                label: const CustomColumnLabel('編集'),
+                                width: 100,
                               ),
                             ],
                             autoWidth: false,
@@ -183,7 +205,13 @@ class _ClientScreenState extends State<ClientScreen> {
                           labelText: '取引先を追加する',
                           labelColor: whiteColor,
                           backgroundColor: blueColor,
-                          onPressed: () {},
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => ClientAddDialog(
+                              clientService: clientService,
+                              getClients: _getClients,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -194,6 +222,87 @@ class _ClientScreenState extends State<ClientScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ClientAddDialog extends StatefulWidget {
+  final ClientService clientService;
+  final Function getClients;
+
+  const ClientAddDialog({
+    required this.clientService,
+    required this.getClients,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ClientAddDialog> createState() => _ClientAddDialogState();
+}
+
+class _ClientAddDialogState extends State<ClientAddDialog> {
+  TextEditingController code = TextEditingController();
+  TextEditingController name = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return ContentDialog(
+      title: const Text(
+        '取引先を追加する',
+        style: TextStyle(fontSize: 18),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InfoLabel(
+            label: '取引先コード',
+            child: CustomTextBox(
+              controller: code,
+              placeholder: '例) 01',
+              maxLines: 1,
+            ),
+          ),
+          const SizedBox(height: 8),
+          InfoLabel(
+            label: '取引先名',
+            child: CustomTextBox(
+              controller: name,
+              placeholder: '例) ABC商事',
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        CustomButton(
+          labelText: 'キャンセル',
+          labelColor: whiteColor,
+          backgroundColor: greyColor,
+          onPressed: () => Navigator.pop(context),
+        ),
+        CustomButton(
+          labelText: '追加する',
+          labelColor: whiteColor,
+          backgroundColor: blueColor,
+          onPressed: () async {
+            String? error = await widget.clientService.insert(
+              code: code.text,
+              name: name.text,
+            );
+            if (error != null) {
+              if (!mounted) return;
+              showMessage(context, error, false);
+              return;
+            }
+            widget.getClients();
+            if (!mounted) return;
+            showMessage(context, 'BOXを追加しました', true);
+            Navigator.pop(context);
+            return;
+          },
+        ),
+      ],
     );
   }
 }

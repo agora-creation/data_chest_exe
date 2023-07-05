@@ -398,13 +398,13 @@ class _FormatDeleteDialogState extends State<FormatDeleteDialog> {
           ? null
           : [
               CustomButton(
-                labelText: 'いいえ',
+                labelText: 'キャンセル',
                 labelColor: whiteColor,
                 backgroundColor: greyColor,
                 onPressed: () => Navigator.pop(context),
               ),
               CustomButton(
-                labelText: 'はい',
+                labelText: '削除する',
                 labelColor: whiteColor,
                 backgroundColor: redColor,
                 onPressed: () async {
@@ -477,13 +477,13 @@ class _BackupDeleteDialogState extends State<BackupDeleteDialog> {
           ? null
           : [
               CustomButton(
-                labelText: 'いいえ',
+                labelText: 'キャンセル',
                 labelColor: whiteColor,
                 backgroundColor: greyColor,
                 onPressed: () => Navigator.pop(context),
               ),
               CustomButton(
-                labelText: 'はい',
+                labelText: '削除する',
                 labelColor: whiteColor,
                 backgroundColor: redColor,
                 onPressed: () async {
@@ -593,13 +593,13 @@ class _BackupAddDialogState extends State<BackupAddDialog> {
           ? null
           : [
               CustomButton(
-                labelText: 'いいえ',
+                labelText: 'キャンセル',
                 labelColor: whiteColor,
                 backgroundColor: greyColor,
                 onPressed: () => Navigator.pop(context),
               ),
               CustomButton(
-                labelText: 'はい',
+                labelText: '追加する',
                 labelColor: whiteColor,
                 backgroundColor: blueColor,
                 onPressed: () async {
